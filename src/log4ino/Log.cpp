@@ -24,7 +24,7 @@
 
 #ifndef UNIT_TEST
 
-char errorMsg[LCD_LENGTH + 1];
+char errorMsg[ERROR_MSG_LENGTH + 1];
 
 // !UNIT_TEST, SO ON-BOARD EXECUTION
 #ifdef DEBUG

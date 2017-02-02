@@ -23,8 +23,6 @@
 #ifndef LOG_INC
 #define LOG_INC
 
-//#include <Misc.h>
-
 #define DELAY_DEBUG_MS 5
 #define SERIAL_BAUDS 115200
 
@@ -36,6 +34,8 @@
 #define KYEL "\x1B[33m"
 #define KBLU "\x1B[34m"
 #define KWHTBLU "\x1B[37;44m"
+
+#define ERROR_MSG_LENGTH 16
 
 enum LogLevel { Debug = 0, Info = 1, Warn = 2, Error = 3 };
 
