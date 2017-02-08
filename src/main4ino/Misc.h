@@ -32,6 +32,7 @@
 #define rollValue(amt, low, high) ((amt) < (low) ? (high) : ((amt) > (high) ? (low) : (amt)))
 #define absolute(amt) ((amt) < 0 ? -(amt) : (amt))
 
+#define NAME_LEN 10
 #define LCD_LENGTH 16
 
 enum TimingInterrupt {

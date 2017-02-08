@@ -54,6 +54,7 @@ Bot::Bot(Clock *clk, Actor **a, Configurable **c) {
     i++;
   }
   nroConfigurables = i;
+  stdOutWriteStringFunction = NULL;
 }
 
 void Bot::setStdoutFunction(void (*wrSt)(const char *, const char *)) {
