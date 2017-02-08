@@ -49,6 +49,14 @@ void setupLog() {
   clearErrorLogged();
 }
 
+bool readAvailable() {
+  return Serial.available();
+}
+
+int readByte() {
+  return Serial.read();
+}
+
 void log(const char *clz, LogLevel l, const char *msg) {
   if (LOG_LEVEL <= l) {
     Serial.print("[");
@@ -116,6 +124,7 @@ void log(const char *clz, LogLevel l, const char *msg1, const char *msg2) {
 #else // !DEBUG
 
 char *getErrorLogged() {
+  //BROKEN
   return errorMsg;
 }
 
@@ -130,6 +139,14 @@ void clearErrorLogged() {
 // Do not generate logs
 void setupLog() {
   clearErrorLogged();
+}
+
+bool readAvailable() {
+  return false;
+}
+
+int readByte() {
+  return 0;
 }
 
 void log(const char *clz, LogLevel l, const char *msg) {

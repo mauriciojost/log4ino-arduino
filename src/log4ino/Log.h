@@ -47,6 +47,8 @@ void log(const char *clz, LogLevel l, const char *msg1, const char *msg2);
 char *getErrorLogged();
 bool isThereErrorLogged();
 void clearErrorLogged();
+bool readAvailable();
+int readByte();
 
 #ifndef UNIT_TEST
 
