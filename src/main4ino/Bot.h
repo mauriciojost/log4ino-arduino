@@ -73,7 +73,6 @@ private:
   void toRunMode(BotModeData *data, bool modePressed, bool setPressed, TimingInterrupt timingInterrupt, float subCycle);
   void toConfigConfigurablesMode(BotModeData *data, bool modePressed, bool setPressed, TimingInterrupt timingInterrupt, float subCycle);
 
-  void nextInfoState();
   void nextConfigurableConfigState();
 
   void updateInfo(char *buffer1, char *buffer2);
@@ -101,6 +100,9 @@ public:
   Clock *getClock();
 
   void stdOutWriteString(const char *up, const char *down);
+
+  void nextInfoState();
+
 };
 
 #endif // BOT_INC
