@@ -236,31 +236,31 @@ int Clock::getNroConfigs() {
   }
 }
 
-void Clock::setConfig(int configIndex, char *retroMsg, bool set) {
+void Clock::setConfig(int configIndex, char *retroMsg, SetMode set, int* value) {
   char timeBuffer[LCD_LENGTH + 1];
   switch (configIndex) {
     case (ClockConfigStateHours):
-      if (set) {
+      if (set == SetNext) {
         increaseHour();
       }
       populateWithTime(timeBuffer);
       sprintf(retroMsg, "%s%s", MSG_CLOCK_CONFIG_HOUR, timeBuffer);
       break;
     case (ClockConfigStateMinutes):
-      if (set) {
+      if (set == SetNext) {
         increaseMinute();
       }
       populateWithTime(timeBuffer);
       sprintf(retroMsg, "%s%s", MSG_CLOCK_CONFIG_MINUTE, timeBuffer);
       break;
     case (ClockConfigStateAdvanced):
-      if (set) {
+      if (set == SetNext) {
         advancedConfig = !advancedConfig;
       }
       sprintf(retroMsg, "%s%s", MSG_CLOCK_CONFIG_ADVANCED, (advancedConfig ? MSG_YES : MSG_NO));
       break;
     case (ClockConfigStateSeconds):
-      if (set) {
+      if (set == SetNext) {
         showSeconds = true;
         increaseSecond();
       }
@@ -268,7 +268,7 @@ void Clock::setConfig(int configIndex, char *retroMsg, bool set) {
       sprintf(retroMsg, "%s%s", MSG_CLOCK_CONFIG_SECOND, timeBuffer);
       break;
     case (ClockConfigStateFactorUp):
-      if (set) {
+      if (set == SetNext) {
         increaseFactor();
       }
       if (cyclesFromT0 % 2 == 0) {
@@ -279,10 +279,9 @@ void Clock::setConfig(int configIndex, char *retroMsg, bool set) {
         int f = (secToCyclesFactor - d) * 10000;
         sprintf(retroMsg, "%s%d.%04d", MSG_CLOCK_CONFIG_FACTOR_UP, d, f);
       }
-
       break;
     case (ClockConfigStateFactorDown):
-      if (set) {
+      if (set == SetNext) {
         decreaseFactor();
       }
       if (cyclesFromT0 % 2 == 0) {
@@ -295,7 +294,7 @@ void Clock::setConfig(int configIndex, char *retroMsg, bool set) {
       }
       break;
     case (ClockConfigStateShowSeconds):
-      if (set) {
+      if (set == SetNext) {
         showSeconds = !showSeconds;
       }
       if (cyclesFromT0 % 2 == 0) {

@@ -109,7 +109,7 @@ public:
 
   const char *getName();
   int getNroConfigs();
-  void setConfig(int configIndex, char *retroMsg, bool set);
+  void setConfig(int configIndex, char *retroMsg, SetMode set, int* value);
   int getNroInfos();
   void getInfo(int infoIndex, char *retroMsg);
 };
