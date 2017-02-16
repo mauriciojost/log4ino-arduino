@@ -108,6 +108,8 @@ public:
 
   void getInfos(char *buffer);
 
+  void setConfig(int confIndex, int propIndex, int newValue);
+
 };
 
 #endif // BOT_INC

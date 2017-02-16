@@ -225,6 +225,13 @@ void Bot::stdOutWriteString(const char *up, const char *down) {
     stdOutWriteStringFunction(up, down);
   }
 }
+
+void Bot::setConfig(int confIndex, int propIndex, int newValue) {
+// TODO: add guards
+  char buffer[LCD_LENGTH + 1];
+  configurables[confIndex]->setConfig(propIndex, buffer, SetValue, &newValue);
+}
+
 void Bot::getConfigs(char *body) {
   char buffer[LCD_LENGTH + 1];
   char number[LCD_LENGTH + 1];

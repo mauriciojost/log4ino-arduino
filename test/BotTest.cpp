@@ -224,13 +224,12 @@ void test_bot_correctly_returns_full_status(void) {
   char* expectedInfos = "0.ACTOR0.0.TA_INF_1:0\n0.ACTOR0.1.TA_INF_2:0\n";
   TEST_ASSERT_EQUAL_STRING(expectedInfos, buffer);
 
-  // TODO: uncomment
-  //bot->setConfig(1, 5); // index 1 (ACTOR0.TA_INF_1), new value 5
+  bot->setConfig(0, 1, 5); // actor 0 (ACTOR0), property 1 (TA_CNF_2), new value 5
 
-  //buffer[0] = 0;
-  //bot->getConfigs(buffer);
-  //char* expectedConfigs = "ACTOR0.TA_CNF_1:0\nACTOR0.TA_CNF_2:5\n";
-  //TEST_ASSERT_EQUAL_STRING(expectedConfigs, buffer);
+  buffer[0] = 0;
+  bot->getConfigs(buffer);
+  char* expectedNewConfigs = "0.ACTOR0.0.TA_CNF_1:0\n0.ACTOR0.1.TA_CNF_2:5\n";
+  TEST_ASSERT_EQUAL_STRING(expectedNewConfigs, buffer);
 
 }
 
