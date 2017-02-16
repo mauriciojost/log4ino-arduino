@@ -227,9 +227,14 @@ void Bot::stdOutWriteString(const char *up, const char *down) {
 }
 
 void Bot::setConfig(int confIndex, int propIndex, int newValue) {
-// TODO: add guards
   char buffer[LCD_LENGTH + 1];
-  configurables[confIndex]->setConfig(propIndex, buffer, SetValue, &newValue);
+  bool validConfIndex = confIndex >= 0 || confIndex < nroConfigurables;
+  if (validConfIndex) {
+    bool validPropIndex = propIndex >= 0 || propIndex < configurables[confIndex]->getNroConfigs();
+    if (validPropIndex) {
+      configurables[confIndex]->setConfig(propIndex, buffer, SetValue, &newValue);
+    }
+  }
 }
 
 void Bot::getConfigs(char *body) {

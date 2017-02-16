@@ -201,7 +201,7 @@ void test_bot_correctly_switches_infos(void) {
   TEST_ASSERT_EQUAL(0, bot->getConfigurableStateIndex());
 }
 
-void test_bot_correctly_returns_full_status(void) {
+void test_bot_correctly_returns_full_status_and_sets_config(void) {
   int nroActors = 1;
   int nroConfigurables = 1;
   char buffer[100];
@@ -238,7 +238,7 @@ int main() {
   RUN_TEST(test_bot_correctly_switches_modes);
   RUN_TEST(test_bot_correctly_switches_modes_with_no_config_actor);
   RUN_TEST(test_bot_correctly_switches_infos);
-  RUN_TEST(test_bot_correctly_returns_full_status);
+  RUN_TEST(test_bot_correctly_returns_full_status_and_sets_config);
   UNITY_END();
 }
 
