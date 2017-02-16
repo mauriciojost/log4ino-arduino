@@ -24,10 +24,10 @@
 #define CONFIGURABLE_INC
 
 enum SetMode {
+  DoNotSet = 0,
   SetNext,
-  SetValue,
-  DoNotSet
-}
+  SetValue
+};
 
 /**
 * This class specifies the interface of configurables, components of the
@@ -59,7 +59,7 @@ public:
   * - If set=SetValue, the property will be set to the provided value
   * - If set=DoNotSet, the property will remain unchanged
   */
-  virtual void setConfig(int configIndex, char *retroMsg, SetMode set, int* value) = 0;
+  virtual void setConfig(int configIndex, char *retroMsg, SetMode set, int* value = 0) = 0;
 
   /**
   * Get the number of info states of the configurable.
