@@ -227,11 +227,16 @@ void Bot::stdOutWriteString(const char *up, const char *down) {
 }
 void Bot::getConfigs(char *body) {
   char buffer[LCD_LENGTH + 1];
+  char number[LCD_LENGTH + 1];
   int counter = 0;
   while(nextConfigurableConfigState(counter == 0)) {
-    configurables[configurableIndex]->setConfig(configurableStateIndex, buffer, DoNotSet);
+    sprintf(number, "%d.", configurableIndex);
+    strcat(body, number);
     strcat(body, configurables[configurableIndex]->getName());
     strcat(body, ".");
+    sprintf(number, "%d.", configurableStateIndex);
+    strcat(body, number);
+    configurables[configurableIndex]->setConfig(configurableStateIndex, buffer, DoNotSet);
     strcat(body, buffer);
     strcat(body, "\n");
     counter++;
@@ -240,11 +245,16 @@ void Bot::getConfigs(char *body) {
 
 void Bot::getInfos(char *body) {
   char buffer[LCD_LENGTH + 1];
+  char number[LCD_LENGTH + 1];
   int counter = 0;
   while(nextInfoState(counter == 0)) {
-    configurables[configurableIndex]->getInfo(configurableStateIndex, buffer);
+    sprintf(number, "%d.", configurableIndex);
+    strcat(body, number);
     strcat(body, configurables[configurableIndex]->getName());
     strcat(body, ".");
+    sprintf(number, "%d.", configurableStateIndex);
+    strcat(body, number);
+    configurables[configurableIndex]->getInfo(configurableStateIndex, buffer);
     strcat(body, buffer);
     strcat(body, "\n");
     counter++;

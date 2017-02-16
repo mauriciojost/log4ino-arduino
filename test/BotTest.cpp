@@ -216,12 +216,12 @@ void test_bot_correctly_returns_full_status(void) {
 
   buffer[0] = 0;
   bot->getConfigs(buffer);
-  char* expectedConfigs = "ACTOR0.TA_CNF_1:0\nACTOR0.TA_CNF_2:0\n";
+  char* expectedConfigs = "0.ACTOR0.0.TA_CNF_1:0\n0.ACTOR0.1.TA_CNF_2:0\n";
   TEST_ASSERT_EQUAL_STRING(expectedConfigs, buffer);
 
   buffer[0] = 0;
   bot->getInfos(buffer);
-  char* expectedInfos = "ACTOR0.TA_INF_1:0\nACTOR0.TA_INF_2:0\n";
+  char* expectedInfos = "0.ACTOR0.0.TA_INF_1:0\n0.ACTOR0.1.TA_INF_2:0\n";
   TEST_ASSERT_EQUAL_STRING(expectedInfos, buffer);
 
   // TODO: uncomment
