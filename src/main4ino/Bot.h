@@ -29,6 +29,7 @@
 #include <main4ino/Actor.h>
 #include <main4ino/Configurable.h>
 #include <main4ino/Messages.h>
+#include <string.h>
 
 enum BotMode { // this must be aligned with the modesData positions
   RunMode = 0,
@@ -73,8 +74,6 @@ private:
   void toRunMode(BotModeData *data, bool modePressed, bool setPressed, TimingInterrupt timingInterrupt, float subCycle);
   void toConfigConfigurablesMode(BotModeData *data, bool modePressed, bool setPressed, TimingInterrupt timingInterrupt, float subCycle);
 
-  void nextConfigurableConfigState();
-
   void updateInfo(char *buffer1, char *buffer2);
 
 public:
@@ -101,7 +100,13 @@ public:
 
   void stdOutWriteString(const char *up, const char *down);
 
-  void nextInfoState();
+  bool nextInfoState(bool reset = false);
+
+  bool nextConfigurableConfigState(bool reset = false);
+
+  void getConfigs(char *buffer);
+
+  void getInfos(char *buffer);
 
 };
 

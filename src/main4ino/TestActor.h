@@ -48,6 +48,8 @@ private:
   const char *name;
   bool on;
   bool configsEnabled;
+  int config1;
+  int config2;
   FreqConf freqConf; // configuration of the frequency at which this actor will get triggered
 
 public:

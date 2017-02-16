@@ -28,6 +28,8 @@ TestActor::TestActor(const char *n, const bool enableConfigs) {
   name = n;
   on = false;
   configsEnabled = enableConfigs;
+  config1 = 0;
+  config2 = 0;
 }
 
 const char *TestActor::getName() {
@@ -55,12 +57,16 @@ int TestActor::getActuatorValue() {
 void TestActor::setConfig(int configIndex, char *retroMsg, bool set) {
   switch (configIndex) {
     case (TestActorConfigStateAmount):
-      log(CLASS, Debug, "  TACT CNF: 1");
-      sprintf(retroMsg, "TA_CNF_1");
+      if (set) {
+        config1++;
+      }
+      sprintf(retroMsg, "TA_CNF_1:%d", config1);
       break;
     case (TestActorConfigStateAmount2):
-      log(CLASS, Debug, "  TACT CNF: 1");
-      sprintf(retroMsg, "TA_CNF_2");
+      if (set) {
+        config2++;
+      }
+      sprintf(retroMsg, "TA_CNF_2:%d", config2);
       break;
     default:
       break;
@@ -78,10 +84,10 @@ int TestActor::getNroConfigs() {
 void TestActor::getInfo(int infoIndex, char *retroMsg) {
   switch (infoIndex) {
     case (TestActorInfoConfig):
-      sprintf(retroMsg, "TA_INF_1");
+      sprintf(retroMsg, "TA_INF_1:%d", config1);
       break;
     case (TestActorLastWatered):
-      sprintf(retroMsg, "TA_INF_2");
+      sprintf(retroMsg, "TA_INF_2:%d", config2);
       break;
     default:
       break;

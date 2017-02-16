@@ -151,15 +151,15 @@ void Bot::toConfigConfigurablesMode(BotModeData *data, bool modePressed, bool se
   }
 }
 
-void Bot::nextConfigurableConfigState() {
+bool Bot::nextConfigurableConfigState(bool reset) {
   while (true) {
-    if (canChangeMode) { // just arrived to the config actors state
+    if (canChangeMode || reset) { // just arrived to the config actors state or reset
       canChangeMode = false;
       configurableIndex = 0;
       configurableStateIndex = 0;
       int numConfigs = configurables[configurableIndex]->getNroConfigs();
       if (numConfigs > 0) {
-        break; // stop here, this configurable has some configurations
+        return true; // stop here, this configurable has some configurations
       }
     } else { // were here from previous cycle
       int numConfigs = configurables[configurableIndex]->getNroConfigs();
@@ -172,15 +172,15 @@ void Bot::nextConfigurableConfigState() {
           canChangeMode = true;
           configurableIndex = 0;
           configurableStateIndex = 0;
-          break;                                           // stop here, done with configurables configuration
+          return false;                                    // stop here, done with configurables configuration
         } else if (configurableIndex < nroConfigurables) { // still configurables to configure
           numConfigs = configurables[configurableIndex]->getNroConfigs();
           if (numConfigs > 0) {
-            break; // stop here, this configurable has some configurations
+            return true; // stop here, this configurable has some configurations
           }
         }
       } else if (configurableStateIndex < numConfigs) { // more configuration states for this configurable
-        break;                                          // stop here, this configurable has still some configurations left
+        return true;                                    // stop here, this configurable has still some configurations left
       }
     }
   }
@@ -196,22 +196,22 @@ void Bot::updateInfo(char *lcdUp, char *lcdDown) {
   }
 }
 
-void Bot::nextInfoState() {
+bool Bot::nextInfoState(bool reset) {
   while (true) {
-    if (configurableIndex < nroConfigurables) { // infos for configurables
+    if (configurableIndex < nroConfigurables && !reset) { // infos for configurables
       int nroInfoStates = configurables[configurableIndex]->getNroInfos();
       configurableStateIndex++;
       if (configurableStateIndex >= nroInfoStates) { // number of info states for this configurable reached
         configurableIndex++;
         configurableStateIndex = -1;
       } else { // not reached so we stay here
-        break;
+        return true; // can continue
       }
     }
-    if (configurableIndex >= nroConfigurables) { // reset indexes
+    if (configurableIndex >= nroConfigurables || reset) { // reset indexes
       configurableIndex = 0;
       configurableStateIndex = 0;
-      break;
+      return reset; // no more states
     }
   }
 }
@@ -225,3 +225,29 @@ void Bot::stdOutWriteString(const char *up, const char *down) {
     stdOutWriteStringFunction(up, down);
   }
 }
+void Bot::getConfigs(char *body) {
+  char buffer[LCD_LENGTH + 1];
+  int counter = 0;
+  while(nextConfigurableConfigState(counter == 0)) {
+    configurables[configurableIndex]->setConfig(configurableStateIndex, buffer, false);
+    strcat(body, configurables[configurableIndex]->getName());
+    strcat(body, ".");
+    strcat(body, buffer);
+    strcat(body, "\n");
+    counter++;
+  }
+}
+
+void Bot::getInfos(char *body) {
+  char buffer[LCD_LENGTH + 1];
+  int counter = 0;
+  while(nextInfoState(counter == 0)) {
+    configurables[configurableIndex]->getInfo(configurableStateIndex, buffer);
+    strcat(body, configurables[configurableIndex]->getName());
+    strcat(body, ".");
+    strcat(body, buffer);
+    strcat(body, "\n");
+    counter++;
+  }
+}
+

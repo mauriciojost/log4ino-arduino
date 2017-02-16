@@ -201,11 +201,44 @@ void test_bot_correctly_switches_infos(void) {
   TEST_ASSERT_EQUAL(0, bot->getConfigurableStateIndex());
 }
 
+void test_bot_correctly_returns_full_status(void) {
+  int nroActors = 1;
+  int nroConfigurables = 1;
+  char buffer[100];
+  TestActor a0("ACTOR0", true);
+  Actor *dumbActors[] = {&a0, 0}; // null terminated
+  Clock clock(dumbActors, nroActors);
+  Configurable *configurables[] = {&a0, 0}; // null terminated
+  Bot *bot = new Bot(&clock, dumbActors, configurables);
+  bot->setStdoutFunction(displayLcdMockupFunctionString);
+
+  bot->setMode(RunMode);
+
+  buffer[0] = 0;
+  bot->getConfigs(buffer);
+  char* expectedConfigs = "ACTOR0.TA_CNF_1:0\nACTOR0.TA_CNF_2:0\n";
+  TEST_ASSERT_EQUAL_STRING(expectedConfigs, buffer);
+
+  buffer[0] = 0;
+  bot->getInfos(buffer);
+  char* expectedInfos = "ACTOR0.TA_INF_1:0\nACTOR0.TA_INF_2:0\n";
+  TEST_ASSERT_EQUAL_STRING(expectedInfos, buffer);
+
+  bot->setConfig(1, 5); // index 1 (ACTOR0.TA_INF_1), new value 5
+
+  buffer[0] = 0;
+  bot->getConfigs(buffer);
+  char* expectedConfigs = "ACTOR0.TA_CNF_1:0\nACTOR0.TA_CNF_2:5\n";
+  TEST_ASSERT_EQUAL_STRING(expectedConfigs, buffer);
+
+}
+
 int main() {
   UNITY_BEGIN();
   RUN_TEST(test_bot_correctly_switches_modes);
   RUN_TEST(test_bot_correctly_switches_modes_with_no_config_actor);
   RUN_TEST(test_bot_correctly_switches_infos);
+  RUN_TEST(test_bot_correctly_returns_full_status);
   UNITY_END();
 }
 
