@@ -142,7 +142,7 @@ void Bot::toConfigConfigurablesMode(BotModeData *data, bool modePressed, bool se
   if (timingInterrupt == TimingInterruptCycle || modePressed || setPressed) {
     if (!canChangeMode) { // not yet done with configurables configuration
       sprintf(lcdUp, "%s %s", data->lcdMessage, configurables[configurableIndex]->getName());
-      configurables[configurableIndex]->setConfig(configurableStateIndex, lcdDown, change);
+      configurables[configurableIndex]->setConfig(configurableStateIndex, lcdDown, (change?SetNext:DoNotSet));
     } else { // done with actors configuration
       sprintf(lcdUp, "%s %s", data->lcdMessage, MSG_READY);
       sprintf(lcdDown, MSG_BOT_DONE_CONFIGURING_CONFIGURABLES);
@@ -229,7 +229,7 @@ void Bot::getConfigs(char *body) {
   char buffer[LCD_LENGTH + 1];
   int counter = 0;
   while(nextConfigurableConfigState(counter == 0)) {
-    configurables[configurableIndex]->setConfig(configurableStateIndex, buffer, false);
+    configurables[configurableIndex]->setConfig(configurableStateIndex, buffer, DoNotSet);
     strcat(body, configurables[configurableIndex]->getName());
     strcat(body, ".");
     strcat(body, buffer);
