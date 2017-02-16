@@ -54,17 +54,21 @@ int TestActor::getActuatorValue() {
   return on;
 }
 
-void TestActor::setConfig(int configIndex, char *retroMsg, bool set) {
+void TestActor::setConfig(int configIndex, char *retroMsg, SetMode set, int* value) {
   switch (configIndex) {
     case (TestActorConfigStateAmount):
-      if (set) {
+      if (set == SetNext) {
         config1++;
+      } else if (set == SetValue) {
+        config1 = *value;
       }
       sprintf(retroMsg, "TA_CNF_1:%d", config1);
       break;
     case (TestActorConfigStateAmount2):
-      if (set) {
+      if (set == SetNext) {
         config2++;
+      } else if (set == SetValue) {
+        config2 = *value;
       }
       sprintf(retroMsg, "TA_CNF_2:%d", config2);
       break;

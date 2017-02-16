@@ -62,7 +62,7 @@ public:
   int getActuatorValue();
 
   int getNroConfigs();
-  void setConfig(int configIndex, char *retroMsg, bool set);
+  void setConfig(int configIndex, char *retroMsg, SetMode set, int* value);
 
   void getInfo(int infoIndex, char *retroMsg);
   int getNroInfos();
