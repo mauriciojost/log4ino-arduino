@@ -23,6 +23,12 @@
 #ifndef CONFIGURABLE_INC
 #define CONFIGURABLE_INC
 
+enum SetMode {
+  SetNext,
+  SetValue,
+  DoNotSet
+}
+
 /**
 * This class specifies the interface of configurables, components of the
 * embedded system which:
@@ -46,9 +52,14 @@ public:
   virtual int getNroConfigs() = 0;
 
   /**
-  * Retrieve configuration message given its index, and set the configuration if requested.
+  * Set a property given its index.
+  * Calling this method fills in the retroMsg, useful to feed an LCD. Also the value parameter with the actual property value.
+  *
+  * - If set=SetNext, the property will change to the next value available
+  * - If set=SetValue, the property will be set to the provided value
+  * - If set=DoNotSet, the property will remain unchanged
   */
-  virtual void setConfig(int configIndex, char *retroMsg, bool set) = 0;
+  virtual void setConfig(int configIndex, char *retroMsg, SetMode set, int* value) = 0;
 
   /**
   * Get the number of info states of the configurable.
