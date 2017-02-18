@@ -216,19 +216,14 @@ void test_bot_correctly_returns_full_status_and_sets_config(void) {
 
   buffer[0] = 0;
   bot->getConfigs(buffer);
-  char* expectedConfigs = "0.ACTOR0.0.TA_CNF_1:0\n0.ACTOR0.1.TA_CNF_2:0\n";
+  char* expectedConfigs = "c0p0=0&c0p1=0&";
   TEST_ASSERT_EQUAL_STRING(expectedConfigs, buffer);
-
-  buffer[0] = 0;
-  bot->getInfos(buffer);
-  char* expectedInfos = "0.ACTOR0.0.TA_INF_1:0\n0.ACTOR0.1.TA_INF_2:0\n";
-  TEST_ASSERT_EQUAL_STRING(expectedInfos, buffer);
 
   bot->setConfig(0, 1, 5); // actor 0 (ACTOR0), property 1 (TA_CNF_2), new value 5
 
   buffer[0] = 0;
   bot->getConfigs(buffer);
-  char* expectedNewConfigs = "0.ACTOR0.0.TA_CNF_1:0\n0.ACTOR0.1.TA_CNF_2:5\n";
+  char* expectedNewConfigs = "c0p0=0&c0p1=5&";
   TEST_ASSERT_EQUAL_STRING(expectedNewConfigs, buffer);
 
 }

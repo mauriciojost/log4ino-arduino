@@ -63,6 +63,7 @@ void TestActor::setConfig(int configIndex, char *retroMsg, SetMode set, int* val
         config1 = *value;
       }
       sprintf(retroMsg, "TA_CNF_1:%d", config1);
+      if (value != NULL) { *value = config1;}
       break;
     case (TestActorConfigStateAmount2):
       if (set == SetNext) {
@@ -71,6 +72,7 @@ void TestActor::setConfig(int configIndex, char *retroMsg, SetMode set, int* val
         config2 = *value;
       }
       sprintf(retroMsg, "TA_CNF_2:%d", config2);
+      if (value != NULL) { *value = config2;}
       break;
     default:
       break;

@@ -106,8 +106,6 @@ public:
 
   void getConfigs(char *buffer);
 
-  void getInfos(char *buffer);
-
   void setConfig(int confIndex, int propIndex, int newValue);
 
 };

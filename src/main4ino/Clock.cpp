@@ -245,6 +245,7 @@ void Clock::setConfig(int configIndex, char *retroMsg, SetMode set, int* value) 
       }
       populateWithTime(timeBuffer);
       sprintf(retroMsg, "%s%s", MSG_CLOCK_CONFIG_HOUR, timeBuffer);
+      if (value != NULL) {*value = getHours();}
       break;
     case (ClockConfigStateMinutes):
       if (set == SetNext) {
@@ -252,12 +253,14 @@ void Clock::setConfig(int configIndex, char *retroMsg, SetMode set, int* value) 
       }
       populateWithTime(timeBuffer);
       sprintf(retroMsg, "%s%s", MSG_CLOCK_CONFIG_MINUTE, timeBuffer);
+      if (value != NULL) {*value = getMinutes();}
       break;
     case (ClockConfigStateAdvanced):
       if (set == SetNext) {
         advancedConfig = !advancedConfig;
       }
       sprintf(retroMsg, "%s%s", MSG_CLOCK_CONFIG_ADVANCED, (advancedConfig ? MSG_YES : MSG_NO));
+      if (value != NULL) {*value = advancedConfig;}
       break;
     case (ClockConfigStateSeconds):
       if (set == SetNext) {
@@ -266,6 +269,7 @@ void Clock::setConfig(int configIndex, char *retroMsg, SetMode set, int* value) 
       }
       populateWithTime(timeBuffer);
       sprintf(retroMsg, "%s%s", MSG_CLOCK_CONFIG_SECOND, timeBuffer);
+      if (value != NULL) {*value = getSeconds();}
       break;
     case (ClockConfigStateFactorUp):
       if (set == SetNext) {
@@ -279,6 +283,7 @@ void Clock::setConfig(int configIndex, char *retroMsg, SetMode set, int* value) 
         int f = (secToCyclesFactor - d) * 10000;
         sprintf(retroMsg, "%s%d.%04d", MSG_CLOCK_CONFIG_FACTOR_UP, d, f);
       }
+      if (value != NULL) {*value = secToCyclesFactor * 10000;}
       break;
     case (ClockConfigStateFactorDown):
       if (set == SetNext) {
@@ -292,6 +297,7 @@ void Clock::setConfig(int configIndex, char *retroMsg, SetMode set, int* value) 
         int f = (secToCyclesFactor - d) * 10000;
         sprintf(retroMsg, "%s%d.%04d", MSG_CLOCK_CONFIG_FACTOR_DOWN, d, f);
       }
+      if (value != NULL) {*value = secToCyclesFactor * 10000;}
       break;
     case (ClockConfigStateShowSeconds):
       if (set == SetNext) {
@@ -303,6 +309,7 @@ void Clock::setConfig(int configIndex, char *retroMsg, SetMode set, int* value) 
       } else {
         sprintf(retroMsg, "%s%s", MSG_CLOCK_CONFIG_SHOW_SECONDS, (showSeconds ? MSG_YES : MSG_NO));
       }
+      if (value != NULL) {*value = showSeconds;}
       break;
     default:
       break;

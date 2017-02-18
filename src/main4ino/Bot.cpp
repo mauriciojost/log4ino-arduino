@@ -238,38 +238,16 @@ void Bot::setConfig(int confIndex, int propIndex, int newValue) {
 }
 
 void Bot::getConfigs(char *body) {
+  char conf[LCD_LENGTH + 1];
   char buffer[LCD_LENGTH + 1];
-  char number[LCD_LENGTH + 1];
   int counter = 0;
+  int value;
   while(nextConfigurableConfigState(counter == 0)) {
-    sprintf(number, "%d.", configurableIndex);
-    strcat(body, number);
-    strcat(body, configurables[configurableIndex]->getName());
-    strcat(body, ".");
-    sprintf(number, "%d.", configurableStateIndex);
-    strcat(body, number);
-    configurables[configurableIndex]->setConfig(configurableStateIndex, buffer, DoNotSet);
+    configurables[configurableIndex]->setConfig(configurableStateIndex, conf, DoNotSet, &value);
+    sprintf(buffer, "c%dp%d=%d&", configurableIndex, configurableStateIndex, value);
     strcat(body, buffer);
-    strcat(body, "\n");
     counter++;
   }
 }
 
-void Bot::getInfos(char *body) {
-  char buffer[LCD_LENGTH + 1];
-  char number[LCD_LENGTH + 1];
-  int counter = 0;
-  while(nextInfoState(counter == 0)) {
-    sprintf(number, "%d.", configurableIndex);
-    strcat(body, number);
-    strcat(body, configurables[configurableIndex]->getName());
-    strcat(body, ".");
-    sprintf(number, "%d.", configurableStateIndex);
-    strcat(body, number);
-    configurables[configurableIndex]->getInfo(configurableStateIndex, buffer);
-    strcat(body, buffer);
-    strcat(body, "\n");
-    counter++;
-  }
-}
 
