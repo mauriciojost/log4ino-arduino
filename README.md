@@ -1,57 +1,32 @@
-# MAIN4INO README
+# LOG4INO README
 
-This is a library for the configuration and control of software.
+This is a basic library for logging control in Arduino.
 
 If you like it, feel free to **star the project!**
 
 ## Use
 
-Your goal is to instantiate the `Bot` class. 
-
-For this you will create:
-
-- `Configurable`s: they will extend the class Configurable, and will be expose their configuration to the user. Example: a humidity sensor, whose alarm threshold must be configured by the user. Also any module used by other actors can be a `Configurable`.
-
-- `Actor`s: they will extend the class `Actor` (and indirectly `Configurable`), and will be triggered with the specified frequency to act. Example: the same humidity sensor of above, which will act to actually measure humidity regularly, based on what has been configured by the user.
-
-## Develop
-
-The project makes use of [PlatformIO IoT open-source ecosystem](http://platformio.org/) for building and testing purposes.
-
-Use _platformio v3.1.0_ or higher. As it comes with CLI tools, compiling and testing can be launched even without IDE.
-
-Installation of _PlatformIO CLI_ is much easier and predictable when installing it together with the _Atom IDE_ ([download _deb_ file provided as _Atom for PlatformIO_ here](http://platformio.org/platformio-ide)).
-
-If you really want an IDE (I do): I personally use _Intellij IDEA 14_ with the _C/C++_ plugin, and it works very well. Also I have used _bluefish_ and I was pretty satisfied with it.
-
-About the formatter, I recommend using _clang-format_ tool. Use [this script](misc/format.bash) for automatic formatting.
-
-To **compile** the project execute: 
-
+Just copy somewhere in your project (for instance under `$ROOT_DIR/lib/`) and do:
 ```
-platformio run
+cd $ROOT_DIR
+ln -s lib/log4ino/src/log4ino src/log4ino
 ```
 
-To execute the **unit tests** (that will run on your PC) execute: 
+Then include the headers: 
 
 ```
-bash misc/test.bash
+#include <log4ino/Log.h>
 ```
 
-Note that for the execution of these tests on a CI platform (such as **Travis CI**) you will need to
-create an account in PlatformIO Plus by doing: 
+and use: 
 
 ```
-platformio account register
-platformio account login
-platformio account token
+#define CLASS "Main"
+...
+log(CLASS, Info, "Initialized correctly");
 ```
 
-Retrieve the token and use it (hidden) in your CI platform by exporting: 
-
-```
-PLATFORMIO_AUTH_TOKEN=<token>
-```
+Log level can be controlled via macros.
 
 ## License
 
