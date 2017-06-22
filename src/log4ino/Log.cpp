@@ -21,32 +21,19 @@
  */
 
 #include <log4ino/Log.h>
+#include <string.h>
+#include <stdio.h>
+#include <stdarg.h>
 
 #ifndef UNIT_TEST
-
-char errorMsg[ERROR_MSG_LENGTH + 1];
 
 // !UNIT_TEST, SO ON-BOARD EXECUTION
 #ifdef DEBUG
 
 const char *logLevelStr[4] = {"DEBUG", "INFO", "WARN", "ERROR"};
 
-// Receive logs via serial port
-char *getErrorLogged() {
-  return errorMsg;
-}
-
-bool isThereErrorLogged() {
-  return strlen(errorMsg) > 0;
-}
-
-void clearErrorLogged() {
-  sprintf(errorMsg, "");
-}
-
 void setupLog() {
   Serial.begin(SERIAL_BAUDS);
-  clearErrorLogged();
 }
 
 bool readAvailable() {
@@ -57,160 +44,58 @@ int readByte() {
   return Serial.read();
 }
 
-void log(const char *clz, LogLevel l, const char *msg) {
+void log(const char *clz, LogLevel l, const char *format, ...) {
   if (LOG_LEVEL <= l) {
+    char buffer[100];
+    va_list args;
+    va_start(args, format);
+    vsnprintf(buffer, 100, format, args);
     Serial.print("[");
     Serial.print(clz);
     Serial.print("] ");
     Serial.print(logLevelStr[l]);
     Serial.print(": ");
-    Serial.println(msg);
+    Serial.println(buffer);
     delay(DELAY_DEBUG_MS);
-  }
-  if (l == Error) {
-    sprintf(errorMsg, "%s", msg);
-  }
-}
-
-void log(const char *clz, LogLevel l, int msg) {
-  if (LOG_LEVEL <= l) {
-    Serial.print("[");
-    Serial.print(clz);
-    Serial.print("] ");
-    Serial.print(logLevelStr[l]);
-    Serial.print(": ");
-    Serial.println(msg);
-    delay(DELAY_DEBUG_MS);
-  }
-  if (l == Error) {
-    sprintf(errorMsg, "%d", msg);
-  }
-}
-
-void log(const char *clz, LogLevel l, const char *msg, int i) {
-  if (LOG_LEVEL <= l) {
-    Serial.print("[");
-    Serial.print(clz);
-    Serial.print("] ");
-    Serial.print(logLevelStr[l]);
-    Serial.print(": ");
-    Serial.print(msg);
-    Serial.print(" ");
-    Serial.println(i);
-    delay(DELAY_DEBUG_MS);
-  }
-  if (l == Error) {
-    sprintf(errorMsg, "%s%d", msg, i);
-  }
-}
-
-void log(const char *clz, LogLevel l, const char *msg1, const char *msg2) {
-  if (LOG_LEVEL <= l) {
-    Serial.print("[");
-    Serial.print(clz);
-    Serial.print("] ");
-    Serial.print(logLevelStr[l]);
-    Serial.print(": ");
-    Serial.print(msg1);
-    Serial.print(" ");
-    Serial.println(msg2);
-    delay(DELAY_DEBUG_MS);
-  }
-  if (l == Error) {
-    sprintf(errorMsg, "%s%s", msg1, msg2);
+    va_end(args);
   }
 }
 
 #else // !DEBUG
 
-char *getErrorLogged() {
-  //BROKEN
-  return errorMsg;
-}
-
-bool isThereErrorLogged() {
-  return strlen(errorMsg) > 0;
-}
-
-void clearErrorLogged() {
-  errorMsg[0] = 0;
-}
-
 // Do not generate logs
-void setupLog() {
-  clearErrorLogged();
-}
+void setupLog() { }
 
-bool readAvailable() {
-  return false;
-}
+bool readAvailable() { return false; }
 
-int readByte() {
-  return 0;
-}
+int readByte() { return 0; }
 
-void log(const char *clz, LogLevel l, const char *msg) {
-  if (l == Error) {
-    sprintf(errorMsg, "%s", msg);
-  }
-}
-
-void log(const char *clz, LogLevel l, int msg) {
-  if (l == Error) {
-    sprintf(errorMsg, "%d", msg);
-  }
-}
-
-void log(const char *clz, LogLevel l, const char *msg, int i) {
-  if (l == Error) {
-    sprintf(errorMsg, "%s%d", msg, i);
-  }
-}
-
-void log(const char *clz, LogLevel l, const char *msg1, const char *msg2) {
-  if (l == Error) {
-    sprintf(errorMsg, "%s%s", msg1, msg2);
-  }
-}
+void log(const char *clz, LogLevel l, const char *format, ...) { }
 
 #endif // DEBUG
 
 #else // UNIT_TEST, SO ON-PC EXECUTION
 
+// ON-PC SHELL COLORS (to be used with printf in PC tests)
+// http://ascii-table.com/ansi-escape-sequences.php
+#define KNRM "\x1B[0m"
+#define KRED "\x1B[31m"
+#define KMAG "\x1B[35m"
+#define KYEL "\x1B[33m"
+#define KBLU "\x1B[34m"
+#define KWHTBLU "\x1B[37;44m"
 const char *logLevelStr[4] = {KYEL "DEBUG" KNRM, KBLU "INFO " KNRM, KMAG "WARN " KNRM, KRED "ERROR" KNRM};
-
-char *getErrorLogged() {
-  return NULL;
-}
-
-bool isThereErrorLogged() {
-  return false;
-}
-
-void clearErrorLogged() {}
 
 void setupLog() {}
 
-void log(const char *clz, LogLevel l, const char *msg) {
+void log(const char *clz, LogLevel l, const char *format, ...) {
   if (LOG_LEVEL <= l) {
-    printf("[%8.8s] [%s]: %s\n", clz, logLevelStr[l], msg);
-  }
-}
-void log(const char *clz, LogLevel l, int msg) {
-  if (LOG_LEVEL <= l) {
-    printf("[%8.8s] [%s]: %d\n", clz, logLevelStr[l], msg);
-  }
-}
-
-void log(const char *clz, LogLevel l, const char *msg, int i) {
-  if (LOG_LEVEL <= l) {
-    printf("[%8.8s] [%s]: %s %d\n", clz, logLevelStr[l], msg, i);
-  }
-}
-
-void log(const char *clz, LogLevel l, const char *msg1, const char *msg2) {
-  if (LOG_LEVEL <= l) {
-    printf("[%8.8s] [%s]: %s %s\n", clz, logLevelStr[l], msg1, msg2);
+    char buffer[100];
+    va_list args;
+    va_start(args, format);
+    vsnprintf(buffer, 100, format, args);
+    printf("[%8.8s] [%s]: %s %s\n", clz, logLevelStr[l], buffer);
+    va_end(args);
   }
 }
 
