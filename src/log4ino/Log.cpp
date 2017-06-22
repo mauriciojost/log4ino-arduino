@@ -87,7 +87,7 @@ void log(const char *clz, LogLevel l, const char *format, ...) {
     va_list args;
     va_start(args, format);
     vsnprintf(buffer, 100, format, args);
-    printf("[%8.8s] [%s]: %s %s\n", clz, logLevelStr[l], buffer);
+    printf("[%8.8s] [%s]: %s\n", clz, logLevelStr[l], buffer);
     va_end(args);
   }
 }
