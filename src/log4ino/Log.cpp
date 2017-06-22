@@ -76,14 +76,7 @@ void log(const char *clz, LogLevel l, const char *format, ...) { }
 
 #else // UNIT_TEST, SO ON-PC EXECUTION
 
-// ON-PC SHELL COLORS (to be used with printf in PC tests)
-// http://ascii-table.com/ansi-escape-sequences.php
-#define KNRM "\x1B[0m"
-#define KRED "\x1B[31m"
-#define KMAG "\x1B[35m"
-#define KYEL "\x1B[33m"
-#define KBLU "\x1B[34m"
-#define KWHTBLU "\x1B[37;44m"
+#include <log4ino/Colors.h>
 const char *logLevelStr[4] = {KYEL "DEBUG" KNRM, KBLU "INFO " KNRM, KMAG "WARN " KNRM, KRED "ERROR" KNRM};
 
 void setupLog() {}
