@@ -34,6 +34,7 @@ const char *logLevelStr[4] = {"DEBUG", "INFO", "WARN", "ERROR"};
 
 void setupLog() {
   Serial.begin(SERIAL_BAUDS);
+  Serial.println("LOG: OK");
 }
 
 bool readAvailable() {
