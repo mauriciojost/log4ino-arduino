@@ -25,16 +25,20 @@
 #include <stdio.h>
 #include <stdarg.h>
 
+#ifndef MAX_LOG_MSG_LENGTH
+#define MAX_LOG_MSG_LENGTH 16
+#endif // MAX_LOG_MSG_LENGTH
+
 #ifndef UNIT_TEST
 
 // !UNIT_TEST, SO ON-BOARD EXECUTION
 #ifdef DEBUG
 
-const char *logLevelStr[4] = {"DEBUG", "INFO", "WARN", "ERROR"};
+const char *logLevelStr[4] = {"D", "I", "W", "E"};
 
 void setupLog() {
   Serial.begin(SERIAL_BAUDS);
-  Serial.println("LOG: OK");
+  Serial.println("LOK");
 }
 
 bool readAvailable() {
@@ -47,10 +51,11 @@ int readByte() {
 
 void log(const char *clz, LogLevel l, const char *format, ...) {
   if (LOG_LEVEL <= l) {
-    char buffer[100];
+    char buffer[MAX_LOG_MSG_LENGTH];
     va_list args;
     va_start(args, format);
-    vsnprintf(buffer, 100, format, args);
+    vsnprintf(buffer, MAX_LOG_MSG_LENGTH, format, args);
+    buffer[MAX_LOG_MSG_LENGTH -1] = 0;
     Serial.print("[");
     Serial.print(clz);
     Serial.print("] ");
@@ -84,10 +89,11 @@ void setupLog() {}
 
 void log(const char *clz, LogLevel l, const char *format, ...) {
   if (LOG_LEVEL <= l) {
-    char buffer[100];
+    char buffer[MAX_LOG_MSG_LENGTH];
     va_list args;
     va_start(args, format);
-    vsnprintf(buffer, 100, format, args);
+    vsnprintf(buffer, MAX_LOG_MSG_LENGTH, format, args);
+    buffer[MAX_LOG_MSG_LENGTH -1] = 0;
     printf("[%8.8s] [%s]: %s\n", clz, logLevelStr[l], buffer);
     va_end(args);
   }
