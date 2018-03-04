@@ -8,5 +8,5 @@
     "url": "https://github.com/mauriciojost/log4ino-arduino.git"
   },
   "frameworks": "arduino",
-  "platforms": "atmelavr,espressif8266"
+  "platforms": "atmelavr,espressif8266,linux_x86_64"
 }
