@@ -35,18 +35,11 @@
 #ifdef DEBUG
 
 const char *logLevelStr[4] = {"D", "I", "W", "E"};
+void (*prnt)(char*) prntFunc = NULL;
 
-void setupLog() {
-  Serial.begin(SERIAL_BAUDS);
-  Serial.println("LOK");
-}
-
-bool readAvailable() {
-  return Serial.available();
-}
-
-int readByte() {
-  return Serial.read();
+void setupLog(void (*prnt)(char*)) {
+  prnt("TEST");
+  prntFunc = prnt;
 }
 
 void log(const char *clz, LogLevel l, const char *format, ...) {
@@ -56,13 +49,12 @@ void log(const char *clz, LogLevel l, const char *format, ...) {
     va_start(args, format);
     vsnprintf(buffer, MAX_LOG_MSG_LENGTH, format, args);
     buffer[MAX_LOG_MSG_LENGTH -1] = 0;
-    Serial.print("[");
-    Serial.print(clz);
-    Serial.print("] ");
-    Serial.print(logLevelStr[l]);
-    Serial.print(": ");
-    Serial.println(buffer);
-    delay(DELAY_DEBUG_MS);
+    prntFunc("[");
+    prntFunc(clz);
+    prntFunc("] ");
+    prntFunc(logLevelStr[l]);
+    prntFunc(": ");
+    prntFunc(buffer);
     va_end(args);
   }
 }
@@ -70,11 +62,7 @@ void log(const char *clz, LogLevel l, const char *format, ...) {
 #else // !DEBUG
 
 // Do not generate logs
-void setupLog() { }
-
-bool readAvailable() { return false; }
-
-int readByte() { return 0; }
+void setupLog(void (*prnt)(char*)) { }
 
 void log(const char *clz, LogLevel l, const char *format, ...) { }
 
@@ -85,7 +73,7 @@ void log(const char *clz, LogLevel l, const char *format, ...) { }
 #include <log4ino/Colors.h>
 const char *logLevelStr[4] = {KYEL "DEBUG" KNRM, KBLU "INFO " KNRM, KMAG "WARN " KNRM, KRED "ERROR" KNRM};
 
-void setupLog() {}
+void setupLog(void (*prnt)(char*)) { }
 
 void log(const char *clz, LogLevel l, const char *format, ...) {
   if (LOG_LEVEL <= l) {
@@ -98,7 +86,5 @@ void log(const char *clz, LogLevel l, const char *format, ...) {
     va_end(args);
   }
 }
-
-void delay(int ms) {}
 
 #endif // UNIT_TEST

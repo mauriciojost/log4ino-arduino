@@ -23,14 +23,9 @@
 #ifndef LOG_INC
 #define LOG_INC
 
-#define DELAY_DEBUG_MS 5
-#define SERIAL_BAUDS 115200
-
 enum LogLevel { Debug = 0, Info = 1, Warn = 2, Error = 3 };
 
-void setupLog();
-bool readAvailable();
-int readByte();
+void setupLog(void (*prnt)(char*));
 void log(const char *clz, LogLevel l, const char *format, ...);
 
 #ifndef UNIT_TEST
