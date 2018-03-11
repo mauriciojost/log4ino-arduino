@@ -38,22 +38,25 @@ const char *logLevelStr[4] = {"D", "I", "W", "E"};
 void (*prntFunc)(const char*) = NULL;
 
 void setupLog(void (*prnt)(const char*)) {
-  prnt("TEST");
+  prnt("-U-");
   prntFunc = prnt;
 }
 
 void log(const char *clz, LogLevel l, const char *format, ...) {
   if (LOG_LEVEL <= l) {
+
     char buffer[MAX_LOG_MSG_LENGTH];
-    char bufferTotal[MAX_LOG_MSG_LENGTH];
     va_list args;
     va_start(args, format);
     vsnprintf(buffer, MAX_LOG_MSG_LENGTH, format, args);
-    buffer[MAX_LOG_MSG_LENGTH -1] = 0;
-    snprintf(bufferTotal, MAX_LOG_MSG_LENGTH, "[%s] %s: %s", clz, logLevelStr[l], buffer);
-    bufferTotal[MAX_LOG_MSG_LENGTH -1] = 0;
-    prntFunc(bufferTotal);
     va_end(args);
+    buffer[MAX_LOG_MSG_LENGTH -1] = 0;
+
+    char bufferTotal[MAX_LOG_MSG_LENGTH];
+    snprintf(bufferTotal, MAX_LOG_MSG_LENGTH, "%s]%s:%s", clz, logLevelStr[l], buffer);
+    bufferTotal[MAX_LOG_MSG_LENGTH -1] = 0;
+
+    prntFunc(bufferTotal);
   }
 }
 
