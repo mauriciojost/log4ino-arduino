@@ -45,16 +45,14 @@ void setupLog(void (*prnt)(const char*)) {
 void log(const char *clz, LogLevel l, const char *format, ...) {
   if (LOG_LEVEL <= l) {
     char buffer[MAX_LOG_MSG_LENGTH];
+    char bufferTotal[MAX_LOG_MSG_LENGTH];
     va_list args;
     va_start(args, format);
     vsnprintf(buffer, MAX_LOG_MSG_LENGTH, format, args);
     buffer[MAX_LOG_MSG_LENGTH -1] = 0;
-    prntFunc("[");
-    prntFunc(clz);
-    prntFunc("] ");
-    prntFunc(logLevelStr[l]);
-    prntFunc(": ");
-    prntFunc(buffer);
+    snprintf(bufferTotal, MAX_LOG_MSG_LENGTH, "[%s] %s: %s", clz, logLevelStr[l], buffer);
+    bufferTotal[MAX_LOG_MSG_LENGTH -1] = 0;
+    prntFunc(bufferTotal);
     va_end(args);
   }
 }
