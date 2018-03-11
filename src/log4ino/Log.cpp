@@ -35,9 +35,9 @@
 #ifdef DEBUG
 
 const char *logLevelStr[4] = {"D", "I", "W", "E"};
-void (*prnt)(char*) prntFunc = NULL;
+void (*prntFunc)(const char*) = NULL;
 
-void setupLog(void (*prnt)(char*)) {
+void setupLog(void (*prnt)(const char*)) {
   prnt("TEST");
   prntFunc = prnt;
 }
@@ -62,7 +62,7 @@ void log(const char *clz, LogLevel l, const char *format, ...) {
 #else // !DEBUG
 
 // Do not generate logs
-void setupLog(void (*prnt)(char*)) { }
+void setupLog(void (*prnt)(const char*)) { }
 
 void log(const char *clz, LogLevel l, const char *format, ...) { }
 
@@ -73,7 +73,7 @@ void log(const char *clz, LogLevel l, const char *format, ...) { }
 #include <log4ino/Colors.h>
 const char *logLevelStr[4] = {KYEL "DEBUG" KNRM, KBLU "INFO " KNRM, KMAG "WARN " KNRM, KRED "ERROR" KNRM};
 
-void setupLog(void (*prnt)(char*)) { }
+void setupLog(void (*prnt)(const char*)) { }
 
 void log(const char *clz, LogLevel l, const char *format, ...) {
   if (LOG_LEVEL <= l) {

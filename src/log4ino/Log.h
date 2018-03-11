@@ -25,7 +25,7 @@
 
 enum LogLevel { Debug = 0, Info = 1, Warn = 2, Error = 3 };
 
-void setupLog(void (*prnt)(char*));
+void setupLog(void (*prnt)(const char*));
 void log(const char *clz, LogLevel l, const char *format, ...);
 
 #ifndef UNIT_TEST
@@ -35,7 +35,6 @@ void log(const char *clz, LogLevel l, const char *format, ...);
 #else // UNIT_TEST, SO ON-PC EXECUTION
 
 #include <stdio.h>
-void delay(int ms);
 
 #endif // UNIT_TEST
 
