@@ -6,11 +6,7 @@ If you like it, feel free to **star the project!**
 
 ## Use
 
-Just copy somewhere in your project (for instance under `$ROOT_DIR/lib/`) and do:
-```
-cd $ROOT_DIR
-ln -s lib/log4ino/src/log4ino src/log4ino
-```
+Just copy the `src/log4ino/` directory somewhere in your project.
 
 Then include the headers: 
 
@@ -23,10 +19,31 @@ and use:
 ```
 #define CLASS "Main"
 ...
-log(CLASS, Info, "Initialized correctly");
+
+void logCallback(const char* str) {
+  // Serial.println(str);
+  // or
+  // LCD.display(str);
+  // or
+  // <your own>
+}
+
+void setup() {
+  setupLog(logCallback);
+
+  log(CLASS, Info, "Initialized correctly: %s", "now");
+}
 ```
 
-Log level can be controlled via macros.
+The levels are: 
+
+- Debug (0)
+- Info (1)
+- Warn (2)
+- Error (3)
+
+Log level can be controlled via `LOG_LEVEL` numeric macro.
+A value of 0 shows everything, 1 will ignore debug, 3 will only show error level. 
 
 ## License
 
