@@ -34,8 +34,11 @@
 // !UNIT_TEST, SO ON-BOARD EXECUTION
 #ifdef DEBUG
 
+char logLevel = LOG_LEVEL;
 const char *logLevelStr[4] = {"D", "I", "W", "E"};
 void (*prntFunc)(const char*) = NULL;
+
+void setLogLevel(char level) { logLevel = level; }
 
 void setupLog(void (*prnt)(const char*)) {
   prnt("-U-");
@@ -43,7 +46,7 @@ void setupLog(void (*prnt)(const char*)) {
 }
 
 void log(const char *clz, LogLevel l, const char *format, ...) {
-  if (LOG_LEVEL <= l) {
+  if (logLevel <= l) {
 
     char buffer[MAX_LOG_MSG_LENGTH];
     va_list args;
@@ -53,7 +56,7 @@ void log(const char *clz, LogLevel l, const char *format, ...) {
     buffer[MAX_LOG_MSG_LENGTH -1] = 0;
 
     char bufferTotal[MAX_LOG_MSG_LENGTH];
-    snprintf(bufferTotal, MAX_LOG_MSG_LENGTH, "%s]%s:%s", clz, logLevelStr[l], buffer);
+    snprintf(bufferTotal, MAX_LOG_MSG_LENGTH, "%s %s %s", clz, logLevelStr[l], buffer);
     bufferTotal[MAX_LOG_MSG_LENGTH -1] = 0;
 
     prntFunc(bufferTotal);
@@ -65,6 +68,8 @@ void log(const char *clz, LogLevel l, const char *format, ...) {
 // Do not generate logs
 void setupLog(void (*prnt)(const char*)) { }
 
+void setLogLevel(char level) { }
+
 void log(const char *clz, LogLevel l, const char *format, ...) { }
 
 #endif // DEBUG
@@ -72,12 +77,14 @@ void log(const char *clz, LogLevel l, const char *format, ...) { }
 #else // UNIT_TEST, SO ON-PC EXECUTION
 
 #include <log4ino/Colors.h>
+
+char logLevel = LOG_LEVEL;
 const char *logLevelStr[4] = {KYEL "DEBUG" KNRM, KBLU "INFO " KNRM, KMAG "WARN " KNRM, KRED "ERROR" KNRM};
 
 void setupLog(void (*prnt)(const char*)) { }
 
 void log(const char *clz, LogLevel l, const char *format, ...) {
-  if (LOG_LEVEL <= l) {
+  if (logLevel <= l) {
     char buffer[MAX_LOG_MSG_LENGTH];
     va_list args;
     va_start(args, format);
