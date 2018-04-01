@@ -36,11 +36,13 @@
 
 char logLevel = LOG_LEVEL;
 const char *logLevelStr[4] = {"D", "I", "W", "E"};
-void (*prntFunc)(const char*) = NULL;
+void (*prntFunc)(const char *) = NULL;
 
-void setLogLevel(char level) { logLevel = level; }
+void setLogLevel(char level) {
+  logLevel = level;
+}
 
-void setupLog(void (*prnt)(const char*)) {
+void setupLog(void (*prnt)(const char *)) {
   prnt("-U-");
   prntFunc = prnt;
 }
@@ -53,11 +55,11 @@ void log(const char *clz, LogLevel l, const char *format, ...) {
     va_start(args, format);
     vsnprintf(buffer, MAX_LOG_MSG_LENGTH, format, args);
     va_end(args);
-    buffer[MAX_LOG_MSG_LENGTH -1] = 0;
+    buffer[MAX_LOG_MSG_LENGTH - 1] = 0;
 
     char bufferTotal[MAX_LOG_MSG_LENGTH];
     snprintf(bufferTotal, MAX_LOG_MSG_LENGTH, "%s %s %s", clz, logLevelStr[l], buffer);
-    bufferTotal[MAX_LOG_MSG_LENGTH -1] = 0;
+    bufferTotal[MAX_LOG_MSG_LENGTH - 1] = 0;
 
     prntFunc(bufferTotal);
   }
@@ -66,11 +68,11 @@ void log(const char *clz, LogLevel l, const char *format, ...) {
 #else // !DEBUG
 
 // Do not generate logs
-void setupLog(void (*prnt)(const char*)) { }
+void setupLog(void (*prnt)(const char *)) {}
 
-void setLogLevel(char level) { }
+void setLogLevel(char level) {}
 
-void log(const char *clz, LogLevel l, const char *format, ...) { }
+void log(const char *clz, LogLevel l, const char *format, ...) {}
 
 #endif // DEBUG
 
@@ -81,7 +83,7 @@ void log(const char *clz, LogLevel l, const char *format, ...) { }
 char logLevel = LOG_LEVEL;
 const char *logLevelStr[4] = {KYEL "DEBUG" KNRM, KBLU "INFO " KNRM, KMAG "WARN " KNRM, KRED "ERROR" KNRM};
 
-void setupLog(void (*prnt)(const char*)) { }
+void setupLog(void (*prnt)(const char *)) {}
 
 void log(const char *clz, LogLevel l, const char *format, ...) {
   if (logLevel <= l) {
@@ -89,7 +91,7 @@ void log(const char *clz, LogLevel l, const char *format, ...) {
     va_list args;
     va_start(args, format);
     vsnprintf(buffer, MAX_LOG_MSG_LENGTH, format, args);
-    buffer[MAX_LOG_MSG_LENGTH -1] = 0;
+    buffer[MAX_LOG_MSG_LENGTH - 1] = 0;
     printf("[%8.8s] [%s]: %s\n", clz, logLevelStr[l], buffer);
     va_end(args);
   }
