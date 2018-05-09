@@ -85,6 +85,10 @@ const char *logLevelStr[4] = {KYEL "DEBUG" KNRM, KBLU "INFO " KNRM, KMAG "WARN "
 
 void setupLog(void (*prnt)(const char *)) {}
 
+void setLogLevel(char level) {
+  logLevel = level;
+}
+
 void log(const char *clz, LogLevel l, const char *format, ...) {
   if (logLevel <= l) {
     char buffer[MAX_LOG_MSG_LENGTH];
