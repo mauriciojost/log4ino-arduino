@@ -1,0 +1,13 @@
+#!/usr/bin/env
+
+# https://github.com/mauriciojost/mavarduino
+#
+# Mavarduino Code Formatter (based on clang-format-3.7)
+# 
+# This script will perform code formatting based on the 
+# provided clang configuration file.
+#
+
+CURRDIR=`dirname $0`
+
+clang-format-3.7 -i $CURRDIR/src/* $CURRDIR/src/*/* $CURRDIR/test/*
