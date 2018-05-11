@@ -32,7 +32,7 @@
 #ifndef UNIT_TEST
 
 // !UNIT_TEST, SO ON-BOARD EXECUTION
-#ifdef DEBUG
+#ifdef YES_DEBUG
 
 char logLevel = LOG_LEVEL;
 const char *logLevelStr[4] = {"D", "I", "W", "E"};
@@ -65,7 +65,7 @@ void log(const char *clz, LogLevel l, const char *format, ...) {
   }
 }
 
-#else // !DEBUG
+#else // !YES_DEBUG
 
 // Do not generate logs
 void setupLog(void (*prnt)(const char *)) {}
@@ -74,7 +74,7 @@ void setLogLevel(char level) {}
 
 void log(const char *clz, LogLevel l, const char *format, ...) {}
 
-#endif // DEBUG
+#endif // YES_DEBUG
 
 #else // UNIT_TEST, SO ON-PC EXECUTION
 
