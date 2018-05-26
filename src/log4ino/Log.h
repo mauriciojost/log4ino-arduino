@@ -28,6 +28,7 @@ enum LogLevel { Debug = 0, Info = 1, Warn = 2, Error = 3 };
 void setupLog(void (*prnt)(const char *));
 void setLogLevel(char level);
 void log(const char *clz, LogLevel l, const char *format, ...);
+void logHex(const char *clz, LogLevel l, const unsigned char *buf, int bytes);
 
 #ifndef UNIT_TEST
 

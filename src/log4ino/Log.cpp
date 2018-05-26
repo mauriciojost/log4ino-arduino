@@ -65,12 +65,26 @@ void log(const char *clz, LogLevel l, const char *format, ...) {
   }
 }
 
+void logHex(const char *clz, LogLevel l, const unsigned char *buf, int bytes) {
+  char buffer[MAX_LOG_MSG_LENGTH];
+  char val[3];
+  buffer[0] = 0;
+  for (int i = 0; i < bytes; i++) {
+    sprintf(val, "%.2x", buf[i]);
+    strncat(buffer, val, MAX_LOG_MSG_LENGTH);
+  }
+  buffer[MAX_LOG_MSG_LENGTH - 1] = 0;
+  log(clz, l, buffer);
+}
+
 #else // !YES_DEBUG
 
 // Do not generate logs
 void setupLog(void (*prnt)(const char *)) {}
 
 void setLogLevel(char level) {}
+
+void logHex(const char *clz, LogLevel l, const unsigned char *buf, int bytes) {}
 
 void log(const char *clz, LogLevel l, const char *format, ...) {}
 
@@ -99,6 +113,18 @@ void log(const char *clz, LogLevel l, const char *format, ...) {
     printf("[%8.8s] [%s]: %s\n", clz, logLevelStr[l], buffer);
     va_end(args);
   }
+}
+
+void logHex(const char *clz, LogLevel l, const unsigned char *buf, int bytes) {
+  char buffer[MAX_LOG_MSG_LENGTH];
+  char val[3];
+  buffer[0] = 0;
+  for (int i = 0; i < bytes; i++) {
+    sprintf(val, "%.2x", buf[i]);
+    strncat(buffer, val, MAX_LOG_MSG_LENGTH);
+  }
+  buffer[MAX_LOG_MSG_LENGTH - 1] = 0;
+  log(clz, l, buffer);
 }
 
 #endif // UNIT_TEST
