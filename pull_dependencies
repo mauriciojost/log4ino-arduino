@@ -1,0 +1,80 @@
+#!/usr/bin/env bash
+
+# https://github.com/mauriciojost/mavarduino
+#
+# Mavarduino Dependency Manager
+# 
+# This script will pull the dependency libraries from GitHub or any 
+# other git public repo using the dependency settings with
+# an extended platformio-like syntax, for instance: 
+# - esp8266/Arduino#master
+# - mauriciojost/log4ino-arduino#1.0.0
+# - git@bitbucket.org:mauriciojost/main4ino-arduino.git#master
+# 
+# This is also an attempt to stop using platformio as: 
+# - the community support is not very mature yet
+# - as its dependency management features are not satisfactory
+#  - many interesting libraries do not publish to platformio
+#
+
+set -x
+set -e
+
+root_dir=`dirname $(readlink -e $0)`
+config_file=${1:-mavarduino.conf}
+libs_dir=$root_dir/libs
+src_dir=$root_dir/src
+
+shopt -s extglob
+
+function pull_dependency() {
+  local d="$1"
+  if [[ "$d" =~ ^(.*)/(.*)\.git#(.*):(.*)$ ]]; 
+  then 
+    local giturl=${BASH_REMATCH[1]}/${BASH_REMATCH[2]}.git
+    local gitproject=${BASH_REMATCH[2]}
+    local gitbranch=${BASH_REMATCH[3]}
+    local gitfiles=${BASH_REMATCH[4]}
+  elif [[ "$d" =~ ^(.*)/(.*)#(.*):(.*)$ ]]; 
+  then 
+    local gituser=${BASH_REMATCH[1]}
+    local gitproject=${BASH_REMATCH[2]}
+    local giturl="https://github.com/$gituser/$gitproject.git"
+    local gitbranch=${BASH_REMATCH[3]}
+    local gitfiles=${BASH_REMATCH[4]}
+  else 
+    echo "Unkown syntax, discarding: $d"
+  fi
+
+  echo "Pulling: $giturl / $gitbranch (files: $gitfiles)"
+  cd $libs_dir
+  git clone "$giturl"
+  cd $gitproject
+  git checkout "$gitbranch"
+  cd ..
+
+  local dep_dir="$gitproject"
+  echo "Linking $dep_dir/$gitfiles to $src_dir/..."
+  ln -svf `readlink -e $dep_dir/$gitfiles` $src_dir/
+
+}
+
+
+echo "### Reading configuration file $config_file ..."
+source $config_file
+
+echo "### Pulling dependencies ..."
+rm -fr "$libs_dir"
+find ./src -type l -delete # delete symlinks
+mkdir -p "$libs_dir"
+for dep in $lib_deps_external
+do
+  pull_dependency "$dep"
+done
+
+
+echo "### Launching after pull script ..."
+cd $root_dir
+after_pull # Must be defined in the configuration file
+
+echo "### Done"

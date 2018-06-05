@@ -1,0 +1,54 @@
+#!/usr/bin/env bash
+
+set -e
+#set -x
+
+function run_test() {
+
+  export main_src="$1"
+
+  export flags="$2"
+
+  export exclude="$3"
+
+  export headers=$(find -L src -name "*.h" | xargs -I% dirname % | uniq | grep -v libs | grep -v test | grep -v unity | grep -v "$exclude" | xargs -I% echo "-I %")
+  export src_c=$(find -L src -name "*.c" | grep -v test | grep -v unity | grep -v libs |  grep -v "$exclude"  | xargs -I% echo " %")
+  export src_cpp=$(find -L src -name "*.cpp" | grep -v test | grep -v unity | grep -v libs | grep -v "$exclude" | xargs -I% echo " %")
+
+  export headers_unity="-I libs/Unity/src"
+  export src_unity="libs/Unity/src/*.c"
+
+  #echo "HEADERS: $headers"
+  #echo "SOURCES C: $src_c"
+  #echo "SOURCES C++: $src_cpp"
+
+  g++ -Wno-deprecated-declarations -g -ggdb -o simulator.bin $flags $src_c $src_cpp $src_unity $main_src $headers -I src $headers_unity
+
+  ./simulator.bin
+  #gdbtui simulator.bin
+
+  rm ./simulator.bin
+
+}
+
+
+source mavarduino.conf
+
+if [ "$is_library" == "true" ]
+then
+  echo "### Testing a library"
+else
+  echo "### Testing a final project (not a library)"
+  platformio run
+fi
+
+
+for f in $(find test -name *.cpp)
+do
+  echo ""
+  echo ""
+  echo "### Running $f"
+  echo ""
+  echo ""
+  run_test "$f" "$test_general_flags" "$test_excludes_pattern"
+done
