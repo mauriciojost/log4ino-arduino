@@ -38,9 +38,7 @@ char logLevel = LOG_LEVEL;
 const char *logLevelStr[4] = {"D", "I", "W", "E"};
 void (*prntFunc)(const char *) = NULL;
 
-void setLogLevel(char level) {
-  logLevel = level;
-}
+void setLogLevel(char level) { logLevel = level; }
 
 void setupLog(void (*prnt)(const char *)) {
   prnt("-U-");
@@ -58,7 +56,8 @@ void log(const char *clz, LogLevel l, const char *format, ...) {
     buffer[MAX_LOG_MSG_LENGTH - 1] = 0;
 
     char bufferTotal[MAX_LOG_MSG_LENGTH];
-    snprintf(bufferTotal, MAX_LOG_MSG_LENGTH, "%s %s %s", clz, logLevelStr[l], buffer);
+    snprintf(bufferTotal, MAX_LOG_MSG_LENGTH, "%s %s %s", clz, logLevelStr[l],
+             buffer);
     bufferTotal[MAX_LOG_MSG_LENGTH - 1] = 0;
 
     prntFunc(bufferTotal);
@@ -95,7 +94,8 @@ void log(const char *clz, LogLevel l, const char *format, ...) {}
 #include <log4ino/Colors.h>
 
 char logLevel = LOG_LEVEL;
-const char *logLevelStr[4] = {KYEL "DEBUG" KNRM, KBLU "INFO " KNRM, KMAG "WARN " KNRM, KRED "ERROR" KNRM};
+const char *logLevelStr[4] = {KYEL "DEBUG" KNRM, KBLU "INFO " KNRM,
+                              KMAG "WARN " KNRM, KRED "ERROR" KNRM};
 
 void setupLog(void (*prnt)(const char *)) {}
 
