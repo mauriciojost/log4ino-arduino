@@ -76,6 +76,12 @@ void logHex(const char *clz, LogLevel l, const unsigned char *buf, int bytes) {
   log(clz, l, buffer);
 }
 
+void logRaw(const char *clz, LogLevel l, const char *raw) {
+  if (logLevel <= l) {
+    prntFunc("%s %s %s", clz, logLevelStr[l], raw);
+  }
+}
+
 #else // !YES_DEBUG
 
 // Do not generate logs
@@ -83,9 +89,11 @@ void setupLog(void (*prnt)(const char *)) {}
 
 void setLogLevel(char level) {}
 
+void log(const char *clz, LogLevel l, const char *format, ...) {}
+
 void logHex(const char *clz, LogLevel l, const unsigned char *buf, int bytes) {}
 
-void log(const char *clz, LogLevel l, const char *format, ...) {}
+void logRaw(const char *clz, LogLevel l, const char *raw) {}
 
 #endif // YES_DEBUG
 
@@ -125,6 +133,12 @@ void logHex(const char *clz, LogLevel l, const unsigned char *buf, int bytes) {
   }
   buffer[MAX_LOG_MSG_LENGTH - 1] = 0;
   log(clz, l, buffer);
+}
+
+void logRaw(const char *clz, LogLevel l, const char *raw) {
+  if (logLevel <= l) {
+    printf("[%8.8s] [%s]: %s\n", clz, logLevelStr[l], raw);
+  }
 }
 
 #endif // UNIT_TEST

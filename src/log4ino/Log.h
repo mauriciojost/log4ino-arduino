@@ -29,6 +29,7 @@ void setupLog(void (*prnt)(const char *));
 void setLogLevel(char level);
 void log(const char *clz, LogLevel l, const char *format, ...);
 void logHex(const char *clz, LogLevel l, const unsigned char *buf, int bytes);
+void logRaw(const char *clz, LogLevel l, const char *raw);
 
 #ifndef UNIT_TEST
 
