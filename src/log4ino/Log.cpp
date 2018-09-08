@@ -78,7 +78,11 @@ void logHex(const char *clz, LogLevel l, const unsigned char *buf, int bytes) {
 
 void logRaw(const char *clz, LogLevel l, const char *raw) {
   if (logLevel <= l) {
-    prntFunc("%s %s %s", clz, logLevelStr[l], raw);
+    prntFunc(clz);
+    prntFunc(" ");
+    prntFunc(logLevelStr[l]);
+    prntFunc(" ");
+    prntFunc(raw);
   }
 }
 
