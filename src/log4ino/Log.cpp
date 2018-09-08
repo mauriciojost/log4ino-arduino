@@ -56,7 +56,7 @@ void log(const char *clz, LogLevel l, const char *format, ...) {
     buffer[MAX_LOG_MSG_LENGTH - 1] = 0;
 
     char bufferTotal[MAX_LOG_MSG_LENGTH];
-    snprintf(bufferTotal, MAX_LOG_MSG_LENGTH, "%s %s %s", clz, logLevelStr[l],
+    snprintf(bufferTotal, MAX_LOG_MSG_LENGTH, "%s %s %s\n", clz, logLevelStr[l],
              buffer);
     bufferTotal[MAX_LOG_MSG_LENGTH - 1] = 0;
 
@@ -69,7 +69,7 @@ void logHex(const char *clz, LogLevel l, const unsigned char *buf, int bytes) {
   char val[3];
   buffer[0] = 0;
   for (int i = 0; i < bytes; i++) {
-    sprintf(val, "%.2x", buf[i]);
+    sprintf(val, "%.2x\n", buf[i]);
     strncat(buffer, val, MAX_LOG_MSG_LENGTH);
   }
   buffer[MAX_LOG_MSG_LENGTH - 1] = 0;
@@ -83,6 +83,7 @@ void logRaw(const char *clz, LogLevel l, const char *raw) {
     prntFunc(logLevelStr[l]);
     prntFunc(" ");
     prntFunc(raw);
+    prntFunc("\n");
   }
 }
 
