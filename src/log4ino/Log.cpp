@@ -60,7 +60,9 @@ void log(const char *clz, LogLevel l, const char *format, ...) {
              buffer);
     bufferTotal[MAX_LOG_MSG_LENGTH - 1] = 0;
 
-    prntFunc(bufferTotal);
+    if (prntFunc != NULL) {
+      prntFunc(bufferTotal);
+    }
   }
 }
 
@@ -78,12 +80,14 @@ void logHex(const char *clz, LogLevel l, const unsigned char *buf, int bytes) {
 
 void logRaw(const char *clz, LogLevel l, const char *raw) {
   if (logLevel <= l) {
-    prntFunc(clz);
-    prntFunc(" ");
-    prntFunc(logLevelStr[l]);
-    prntFunc(" ");
-    prntFunc(raw);
-    prntFunc("\n");
+  	if (prntFunc != NULL) {
+      prntFunc(clz);
+      prntFunc(" ");
+      prntFunc(logLevelStr[l]);
+      prntFunc(" ");
+      prntFunc(raw);
+      prntFunc("\n");
+  	}
   }
 }
 
