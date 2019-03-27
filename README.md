@@ -1,10 +1,10 @@
 # LOG4INO README
 
-This is a basic library for logging control in Arduino.
+This is a basic but yet powerful library for logging in Arduino.
 
 If you like it, feel free to **star the project!**
 
-## Use
+## Get started
 
 Just copy the `src/log4ino/` directory somewhere in your project.
 
@@ -17,7 +17,7 @@ Then include the headers:
 and use: 
 
 ```
-#define CLASS "Main"
+#define CLASS "MA"
 ...
 
 void logCallback(const char* str) {
@@ -45,6 +45,13 @@ The levels are:
 Log level can be controlled via `LOG_LEVEL` numeric macro.
 A value of 0 shows everything, 1 will ignore debug, 3 will only show error level. 
 
+After these simple steps you can do your logging with the following powerful statements: 
+
+```
+log(CLASS, Warn, "This %s", "is");
+log(CLASS, Info, "a very powerful");
+log(CLASS, Debug, "logging framework -> %d %0.2f", 10, 5.0);
+```
 ## License
 
 Note that this project is released under the [GNU General Public License v3](https://www.gnu.org/licenses/gpl.txt). 
