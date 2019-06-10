@@ -66,6 +66,23 @@ void log(const char *clz, LogLevel l, const char *format, ...) {
   }
 }
 
+void logUser(const char *format, ...) {
+  char buffer[MAX_LOG_MSG_LENGTH];
+  va_list args;
+  va_start(args, format);
+  vsnprintf(buffer, MAX_LOG_MSG_LENGTH, format, args);
+  va_end(args);
+  buffer[MAX_LOG_MSG_LENGTH - 1] = 0;
+
+  char bufferTotal[MAX_LOG_MSG_LENGTH];
+  snprintf(bufferTotal, MAX_LOG_MSG_LENGTH, "%s\n", buffer);
+  bufferTotal[MAX_LOG_MSG_LENGTH - 1] = 0;
+
+  if (prntFunc != NULL) {
+    prntFunc(bufferTotal);
+  }
+}
+
 void logHex(const char *clz, LogLevel l, const unsigned char *buf, int bytes) {
   char buffer[MAX_LOG_MSG_LENGTH];
   char val[3];
@@ -100,6 +117,8 @@ void setLogLevel(char level) {}
 
 void log(const char *clz, LogLevel l, const char *format, ...) {}
 
+void logUser(const char *format, ...) {}
+
 void logHex(const char *clz, LogLevel l, const unsigned char *buf, int bytes) {}
 
 void logRaw(const char *clz, LogLevel l, const char *raw) {}
@@ -130,6 +149,16 @@ void log(const char *clz, LogLevel l, const char *format, ...) {
     printf("[%8.8s] [%s]: %s\n", clz, logLevelStr[l], buffer);
     va_end(args);
   }
+}
+
+void logUser(const char *format, ...) {
+  char buffer[MAX_LOG_MSG_LENGTH];
+  va_list args;
+  va_start(args, format);
+  vsnprintf(buffer, MAX_LOG_MSG_LENGTH, format, args);
+  buffer[MAX_LOG_MSG_LENGTH - 1] = 0;
+  printf("%s\n", buffer);
+  va_end(args);
 }
 
 void logHex(const char *clz, LogLevel l, const unsigned char *buf, int bytes) {

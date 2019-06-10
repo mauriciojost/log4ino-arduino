@@ -27,9 +27,19 @@ enum LogLevel { Debug = 0, Info = 1, Warn = 2, Error = 3 };
 
 void setupLog(void (*prnt)(const char *));
 void setLogLevel(char level);
+char getLogLevel();
+
+// Log with a given class identifier and a log level, the formatted arguments
 void log(const char *clz, LogLevel l, const char *format, ...);
+
+// Log with a given class identifier and a log level, in hex representation the given buffer
 void logHex(const char *clz, LogLevel l, const unsigned char *buf, int bytes);
+
+// Log with a given class identifier and a log level, the string as is
 void logRaw(const char *clz, LogLevel l, const char *raw);
+
+// Log inconditionally (independently of the log level) the given formatted arguments (useful for user interaction)
+void logUser(const char *format, ...);
 
 #ifndef UNIT_TEST
 
