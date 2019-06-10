@@ -39,6 +39,7 @@ const char *logLevelStr[4] = {"D", "I", "W", "E"};
 void (*prntFunc)(const char *) = NULL;
 
 void setLogLevel(char level) { logLevel = level; }
+char getLogLevel(){return logLevel;}
 
 void setupLog(void (*prnt)(const char *)) {
   prnt("-U-");
@@ -114,6 +115,7 @@ void logRaw(const char *clz, LogLevel l, const char *raw) {
 void setupLog(void (*prnt)(const char *)) {}
 
 void setLogLevel(char level) {}
+char getLogLevel(){return 0;}
 
 void log(const char *clz, LogLevel l, const char *format, ...) {}
 
@@ -138,6 +140,7 @@ void setupLog(void (*prnt)(const char *)) {}
 void setLogLevel(char level) {
   logLevel = level;
 }
+char getLogLevel(){return logLevel;}
 
 void log(const char *clz, LogLevel l, const char *format, ...) {
   if (logLevel <= l) {
