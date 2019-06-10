@@ -41,6 +41,9 @@ void logRaw(const char *clz, LogLevel l, const char *raw);
 // Log inconditionally (independently of the log level) the given formatted arguments (useful for user interaction)
 void logUser(const char *format, ...);
 
+// Log inconditionally (independently of the log level) the given string
+void logRawUser(const char *str);
+
 #ifndef UNIT_TEST
 
 #include <Arduino.h>

@@ -84,6 +84,13 @@ void logUser(const char *format, ...) {
   }
 }
 
+void logRawUser(const char *raw) {
+  if (prntFunc != NULL) {
+    prntFunc(raw);
+    prntFunc("\n");
+  }
+}
+
 void logHex(const char *clz, LogLevel l, const unsigned char *buf, int bytes) {
   char buffer[MAX_LOG_MSG_LENGTH];
   char val[3];
@@ -124,6 +131,8 @@ void logUser(const char *format, ...) {}
 void logHex(const char *clz, LogLevel l, const unsigned char *buf, int bytes) {}
 
 void logRaw(const char *clz, LogLevel l, const char *raw) {}
+
+void logRawUser(const char *raw) {}
 
 #endif // YES_DEBUG
 
@@ -180,6 +189,10 @@ void logRaw(const char *clz, LogLevel l, const char *raw) {
   if (logLevel <= l) {
     printf("[%8.8s] [%s]: %s\n", clz, logLevelStr[l], raw);
   }
+}
+
+void logRawUser(const char *raw) {
+  printf("%s\n", raw);
 }
 
 #endif // UNIT_TEST
