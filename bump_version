@@ -9,6 +9,13 @@
 
 export BUMP=${1:-PATCH} # can be MAJOR, MINOR or PATCH
 
+CURR_BRANCH=`git rev-parse --abbrev-ref HEAD`
+if [ "$CURR_BRANCH" != "master" ]
+then
+  echo "Must be in master branch to proceed (we are in $CURR_BRANCH)"
+  exit 1;
+fi
+
 function inc() {
   local i=$1
   echo `echo $i + 1 | bc`
