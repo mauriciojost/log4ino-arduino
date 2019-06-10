@@ -9,6 +9,8 @@
 
 export BUMP=${1:-PATCH} # can be MAJOR, MINOR or PATCH
 
+set -e
+
 CURR_BRANCH=`git rev-parse --abbrev-ref HEAD`
 if [ "$CURR_BRANCH" != "master" ]
 then
@@ -20,7 +22,6 @@ function inc() {
   local i=$1
   echo `echo $i + 1 | bc`
 }
-
 
 echo "### Parsing current version ..."
 export VERSION=`cat library.json |  jq  .version | sed 's/"//g'`
@@ -58,7 +59,7 @@ git tag "$NEW_VERSION" -m "$NEW_VERSION"
 echo "### Creating commit new version snapshot: $NEW_VERSION-SNAPSHOT ..."
 sed -i "s/$NEW_VERSION/$NEW_VERSION-SNAPSHOT/g" library.json 
 git add library.json
-git commit -s -m "Bump to $NEW_VERSION"
+git commit -s -m "Bump to $NEW_VERSION-SNAPSHOT"
 
 echo "### Pushing to git..."
 git push 
