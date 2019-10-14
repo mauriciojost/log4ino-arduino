@@ -29,24 +29,35 @@
 #define MAX_LOG_MSG_LENGTH 16
 #endif // MAX_LOG_MSG_LENGTH
 
-#ifndef UNIT_TEST
+#ifdef ARDUINO
 
-// !UNIT_TEST, SO ON-BOARD EXECUTION
+// ARDUINO, SO ON-BOARD EXECUTION
 #ifdef YES_DEBUG
-
 char logLevel = LOG_LEVEL;
 const char *logLevelStr[4] = {"D", "I", "W", "E"};
 void (*prntFunc)(const char *) = NULL;
+#endif // YES_DEBUG
 
-void setLogLevel(char level) { logLevel = level; }
-char getLogLevel(){return logLevel;}
+void setLogLevel(char level) { 
+#ifdef YES_DEBUG
+  logLevel = level;
+#endif // YES_DEBUG
+}
+char getLogLevel(){
+#ifdef YES_DEBUG
+  return logLevel;
+#endif // YES_DEBUG
+}
 
 void setupLog(void (*prnt)(const char *)) {
+#ifdef YES_DEBUG
   prnt("-U-");
   prntFunc = prnt;
+#endif // YES_DEBUG
 }
 
 void log(const char *clz, LogLevel l, const char *format, ...) {
+#ifdef YES_DEBUG
   if (logLevel <= l) {
 
     char buffer[MAX_LOG_MSG_LENGTH];
@@ -65,9 +76,11 @@ void log(const char *clz, LogLevel l, const char *format, ...) {
       prntFunc(bufferTotal);
     }
   }
+#endif // YES_DEBUG
 }
 
 void logUser(const char *format, ...) {
+#ifdef YES_DEBUG
   char buffer[MAX_LOG_MSG_LENGTH];
   va_list args;
   va_start(args, format);
@@ -82,16 +95,20 @@ void logUser(const char *format, ...) {
   if (prntFunc != NULL) {
     prntFunc(bufferTotal);
   }
+#endif // YES_DEBUG
 }
 
 void logRawUser(const char *raw) {
+#ifdef YES_DEBUG
   if (prntFunc != NULL) {
     prntFunc(raw);
     prntFunc("\n");
   }
+#endif // YES_DEBUG
 }
 
 void logHex(const char *clz, LogLevel l, const unsigned char *buf, int bytes) {
+#ifdef YES_DEBUG
   char buffer[MAX_LOG_MSG_LENGTH];
   char val[3];
   buffer[0] = 0;
@@ -101,9 +118,11 @@ void logHex(const char *clz, LogLevel l, const unsigned char *buf, int bytes) {
   }
   buffer[MAX_LOG_MSG_LENGTH - 1] = 0;
   log(clz, l, buffer);
+#endif // YES_DEBUG
 }
 
 void logRaw(const char *clz, LogLevel l, const char *raw) {
+#ifdef YES_DEBUG
   if (logLevel <= l) {
   	if (prntFunc != NULL) {
       prntFunc(clz);
@@ -114,29 +133,12 @@ void logRaw(const char *clz, LogLevel l, const char *raw) {
       prntFunc("\n");
   	}
   }
+#endif // YES_DEBUG
 }
 
-#else // !YES_DEBUG
+#endif
 
-// Do not generate logs
-void setupLog(void (*prnt)(const char *)) {}
-
-void setLogLevel(char level) {}
-char getLogLevel(){return 0;}
-
-void log(const char *clz, LogLevel l, const char *format, ...) {}
-
-void logUser(const char *format, ...) {}
-
-void logHex(const char *clz, LogLevel l, const unsigned char *buf, int bytes) {}
-
-void logRaw(const char *clz, LogLevel l, const char *raw) {}
-
-void logRawUser(const char *raw) {}
-
-#endif // YES_DEBUG
-
-#else // UNIT_TEST, SO ON-PC EXECUTION
+#ifdef X86_64
 
 #include <log4ino/Colors.h>
 
@@ -195,4 +197,4 @@ void logRawUser(const char *raw) {
   printf("%s\n", raw);
 }
 
-#endif // UNIT_TEST
+#endif // X86_64

@@ -44,14 +44,16 @@ void logUser(const char *format, ...);
 // Log inconditionally (independently of the log level) the given string
 void logRawUser(const char *str);
 
-#ifndef UNIT_TEST
+#ifdef ARDUINO
 
 #include <Arduino.h>
 
-#else // UNIT_TEST, SO ON-PC EXECUTION
+#endif // ARDUINO
+
+#ifdef X86_64
 
 #include <stdio.h>
 
-#endif // UNIT_TEST
+#endif // X86_64
 
 #endif // LOG_INC
