@@ -29,13 +29,15 @@
 #define MAX_LOG_MSG_LENGTH 16
 #endif // MAX_LOG_MSG_LENGTH
 
+#define LOG_CLASS "LG"
+
 #ifdef ARDUINO
 
 // ARDUINO, SO ON-BOARD EXECUTION
 #ifdef YES_DEBUG
 char logLevel = LOG_LEVEL;
-const char *logLevelStr[4] = {"D", "I", "W", "E"};
-void (*prntFunc)(const char *) = NULL;
+const char *logLevelStr[5] = {"D", "I", "W", "E", "U"};
+void (*prntFunc)(const char *msg, const char *clz, LogLevel l) = NULL;
 #endif // YES_DEBUG
 
 void setLogLevel(char level) { 
@@ -49,9 +51,9 @@ char getLogLevel(){
 #endif // YES_DEBUG
 }
 
-void setupLog(void (*prnt)(const char *)) {
+void setupLog(void (*prnt)(const char *msg, const char *clz, LogLevel l)) {
 #ifdef YES_DEBUG
-  prnt("-U-");
+  prnt("-U-", LOG_CLASS, Debug);
   prntFunc = prnt;
 #endif // YES_DEBUG
 }
@@ -73,39 +75,12 @@ void log(const char *clz, LogLevel l, const char *format, ...) {
     bufferTotal[MAX_LOG_MSG_LENGTH - 1] = 0;
 
     if (prntFunc != NULL) {
-      prntFunc(bufferTotal);
+      prntFunc(bufferTotal, clz, l);
     }
   }
 #endif // YES_DEBUG
 }
 
-void logUser(const char *format, ...) {
-#ifdef YES_DEBUG
-  char buffer[MAX_LOG_MSG_LENGTH];
-  va_list args;
-  va_start(args, format);
-  vsnprintf(buffer, MAX_LOG_MSG_LENGTH, format, args);
-  va_end(args);
-  buffer[MAX_LOG_MSG_LENGTH - 1] = 0;
-
-  char bufferTotal[MAX_LOG_MSG_LENGTH];
-  snprintf(bufferTotal, MAX_LOG_MSG_LENGTH, "%s\n", buffer);
-  bufferTotal[MAX_LOG_MSG_LENGTH - 1] = 0;
-
-  if (prntFunc != NULL) {
-    prntFunc(bufferTotal);
-  }
-#endif // YES_DEBUG
-}
-
-void logRawUser(const char *raw) {
-#ifdef YES_DEBUG
-  if (prntFunc != NULL) {
-    prntFunc(raw);
-    prntFunc("\n");
-  }
-#endif // YES_DEBUG
-}
 
 void logHex(const char *clz, LogLevel l, const unsigned char *buf, int bytes) {
 #ifdef YES_DEBUG
@@ -125,12 +100,12 @@ void logRaw(const char *clz, LogLevel l, const char *raw) {
 #ifdef YES_DEBUG
   if (logLevel <= l) {
   	if (prntFunc != NULL) {
-      prntFunc(clz);
-      prntFunc(" ");
-      prntFunc(logLevelStr[l]);
-      prntFunc(" ");
-      prntFunc(raw);
-      prntFunc("\n");
+      prntFunc(clz, clz, l);
+      prntFunc(" ", clz, l);
+      prntFunc(logLevelStr[l], clz, l);
+      prntFunc(" ", clz, l);
+      prntFunc(raw, clz, l);
+      prntFunc("\n", clz, l);
   	}
   }
 #endif // YES_DEBUG
@@ -165,16 +140,6 @@ void log(const char *clz, LogLevel l, const char *format, ...) {
   }
 }
 
-void logUser(const char *format, ...) {
-  char buffer[MAX_LOG_MSG_LENGTH];
-  va_list args;
-  va_start(args, format);
-  vsnprintf(buffer, MAX_LOG_MSG_LENGTH, format, args);
-  buffer[MAX_LOG_MSG_LENGTH - 1] = 0;
-  printf("%s\n", buffer);
-  va_end(args);
-}
-
 void logHex(const char *clz, LogLevel l, const unsigned char *buf, int bytes) {
   char buffer[MAX_LOG_MSG_LENGTH];
   char val[3];
@@ -191,10 +156,6 @@ void logRaw(const char *clz, LogLevel l, const char *raw) {
   if (logLevel <= l) {
     printf("[%8.8s] [%s]: %s\n", clz, logLevelStr[l], raw);
   }
-}
-
-void logRawUser(const char *raw) {
-  printf("%s\n", raw);
 }
 
 #endif // X86_64

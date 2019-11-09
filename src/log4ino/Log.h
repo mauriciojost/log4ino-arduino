@@ -23,9 +23,14 @@
 #ifndef LOG_INC
 #define LOG_INC
 
-enum LogLevel { Debug = 0, Info = 1, Warn = 2, Error = 3 };
+// Debug
+// Info
+// Warning
+// Error
+// User (highest level, used for interaction with the user)
+enum LogLevel { Debug = 0, Info = 1, Warn = 2, Error = 3, User = 4};
 
-void setupLog(void (*prnt)(const char *));
+void setupLog(void (*prnt)(const char *msg, const char *clz, LogLevel l));
 void setLogLevel(char level);
 char getLogLevel();
 
@@ -37,12 +42,6 @@ void logHex(const char *clz, LogLevel l, const unsigned char *buf, int bytes);
 
 // Log with a given class identifier and a log level, the string as is
 void logRaw(const char *clz, LogLevel l, const char *raw);
-
-// Log inconditionally (independently of the log level) the given formatted arguments (useful for user interaction)
-void logUser(const char *format, ...);
-
-// Log inconditionally (independently of the log level) the given string
-void logRawUser(const char *str);
 
 #ifdef ARDUINO
 
