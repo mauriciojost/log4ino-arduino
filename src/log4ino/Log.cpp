@@ -121,7 +121,7 @@ char logLevel = LOG_LEVEL;
 const char *logLevelStr[4] = {KYEL "DEBUG" KNRM, KBLU "INFO " KNRM,
                               KMAG "WARN " KNRM, KRED "ERROR" KNRM};
 
-void setupLog(void (*prnt)(const char *)) {}
+void setupLog(void (*prnt)(const char *msg, const char *clz, LogLevel l)) { }
 
 void setLogLevel(char level) {
   logLevel = level;
