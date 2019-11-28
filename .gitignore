@@ -7,3 +7,9 @@
 /misc/libraries.list
 /misc/lib/iom328p.h
 /.project
+/bump_version
+/format_code
+/launch_tests
+/pull_dependencies
+/serial_monitor
+/upload
