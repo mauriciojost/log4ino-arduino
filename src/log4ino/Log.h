@@ -23,15 +23,24 @@
 #ifndef LOG_INC
 #define LOG_INC
 
-// Debug
-// Info
-// Warning
-// Error
+#ifndef LOG_LEVEL
+#define LOG_LEVEL 0
+#endif // LOG_LEVEL
+
+// Debug 0
+// Info 1
+// Warning 2
+// Error 3
 // User (highest level, used for interaction with the user)
 enum LogLevel { Debug = 0, Info = 1, Warn = 2, Error = 3, User = 4};
 
+bool hasToLog(LogLevel l, const char* clz);
+
+// Setup log print primitive and settings.
 void setupLog(void (*prnt)(const char *msg, const char *clz, LogLevel l));
 void setupLog(void (*prnt)(const char *msg, const char *clz, LogLevel l), const char* settings);
+
+// Set the level below which messages will be discarded.
 void setLogLevel(char level);
 char getLogLevel();
 

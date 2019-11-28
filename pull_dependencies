@@ -11,17 +11,30 @@
 # - mauriciojost/log4ino-arduino#1.0.0
 # - git@bitbucket.org:mauriciojost/main4ino-arduino.git#master
 # 
-# This is also an attempt to stop using platformio as: 
+# It picks up files from each repository and simlynks them into 
+# src directory.
+# 
+# This is also an attempt to stop using platformio, because: 
 # - the community support is not very mature yet
-# - as its dependency management features are not satisfactory
-#  - many interesting libraries do not publish to platformio
+# - its dependency management features are not satisfactory
+# - many interesting libraries do not publish to platformio
 #
 
 set -x
 set -e
 
-root_dir=`dirname $(readlink -e $0)`
-config_file=${1:-mavarduino.conf}
+while getopts c:pl option
+do
+  case "${option}"
+  in
+    p) DO_PULL=true;;
+    l) DO_LINK=true;;
+    c) CONFIG_FILE=${OPTARG};;
+  esac
+done
+
+root_dir=`pwd`
+config_file=${CONFIG_FILE:-mavarduino.conf}
 libs_dir=$root_dir/libs
 src_dir=$root_dir/src
 
@@ -46,16 +59,31 @@ function pull_dependency() {
     echo "Unkown syntax, discarding: $d"
   fi
 
-  echo "Pulling: $giturl / $gitbranch (files: $gitfiles)"
-  cd $libs_dir
-  git clone "$giturl"
-  cd $gitproject
-  git checkout "$gitbranch"
-  cd ..
+  if [ -n "$DO_PULL" ]
+  then
+    echo "Pulling: $giturl / $gitbranch (files: $gitfiles)"
+    cd $libs_dir
+    git clone "$giturl"
+    cd $gitproject
+    git checkout "$gitbranch"
+    cd $root_dir
+  fi
 
-  local dep_dir="$gitproject"
-  echo "Linking $dep_dir/$gitfiles to $src_dir/..."
-  ln -svf `readlink -e $dep_dir/$gitfiles` $src_dir/
+  if [ -n "$DO_LINK" ]
+  then
+    local dep_dir="$gitproject"
+    cd $libs_dir/$gitproject
+    if [ "$gitfiles" == "none" ]
+    then
+      echo "Linking no file"
+    else
+      echo "Linking $libs_dir/$gitproject/$gitfiles to $src_dir/..."
+      readlink -e ./$gitfiles > files
+      cat files | xargs -t -I% ln -svf % $src_dir/
+      rm files
+    fi
+    cd $root_dir
+  fi
 
 }
 
@@ -63,10 +91,15 @@ function pull_dependency() {
 echo "### Reading configuration file $config_file ..."
 source $config_file
 
-echo "### Pulling dependencies ..."
-rm -fr "$libs_dir"
+echo "### Performing cleanup ..."
 find ./src -type l -delete # delete symlinks
-mkdir -p "$libs_dir"
+if [ -n "$DO_PULL" ]
+then
+  rm -fr "$libs_dir"
+  mkdir -p "$libs_dir"
+fi
+
+echo "### Pulling dependencies ..."
 for dep in $lib_deps_external
 do
   pull_dependency "$dep"

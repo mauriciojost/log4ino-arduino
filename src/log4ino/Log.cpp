@@ -30,17 +30,37 @@
 #endif // MAX_LOG_MSG_LENGTH
 
 #define LOG_CLASS "LG"
+#define LOG_UNIT_EXPR_LEN 4
+char logLevel = LOG_LEVEL;
 char* logSettings = NULL;
 
-bool hasToLog(LogLevel l) {
-  return (logLevel <= l);
+bool hasToLog(LogLevel l, const char* clz) {
+
+  if (logSettings == NULL || strlen(logSettings) % 4 != 0) {
+    return (logLevel <= l);
+  }
+
+  for (int p = 0; p < strlen(logSettings); p += LOG_UNIT_EXPR_LEN) {
+    char clz_0 = logSettings[p+0];
+    char clz_1 = logSettings[p+1];
+    LogLevel l = (LogLevel)(logSettings[p+2] - '0');
+    if(clz[0] == clz_0 && clz[1] == clz_1) { // direct match
+      return (logLevel <= l);
+    } else if (clz[0] == '?' && clz[1] == clz_1) { // one char match
+      return (logLevel <= l);
+    } else if (clz[0] == clz_0 && clz[1] == '?') { // one char match
+      return (logLevel <= l);
+    } else if (clz[0] == '?' && clz[1] == '?') { // no char match
+      return (logLevel <= l);
+    }
+  }
+  return false;
 }
 
 #ifdef ARDUINO
 
 // ARDUINO, SO ON-BOARD EXECUTION
 #ifdef YES_DEBUG
-char logLevel = LOG_LEVEL;
 const char *logLevelStr[5] = {"D", "I", "W", "E", "U"};
 void (*prntFunc)(const char *msg, const char *clz, LogLevel l) = NULL;
 #endif // YES_DEBUG
@@ -65,6 +85,8 @@ void setupLog(void (*prnt)(const char *msg, const char *clz, LogLevel l)) {
 }
 
 void setupLog(void (*prnt)(const char *msg, const char *clz, LogLevel l), const char* settings) {
+
+  // example of settings: LG0;AB1;??4; => LG class has log level 0, AB class has log level 1, the rest of the classes have log level 4.
 #ifdef YES_DEBUG
   setupLog(prnt);
   logSettings = settings;
@@ -73,7 +95,7 @@ void setupLog(void (*prnt)(const char *msg, const char *clz, LogLevel l), const 
 
 void log(const char *clz, LogLevel l, const char *format, ...) {
 #ifdef YES_DEBUG
-  if (hasToLog(l)) {
+  if (hasToLog(l, clz)) {
 
     char buffer[MAX_LOG_MSG_LENGTH];
     va_list args;
@@ -111,7 +133,7 @@ void logHex(const char *clz, LogLevel l, const unsigned char *buf, int bytes) {
 
 void logRaw(const char *clz, LogLevel l, const char *raw) {
 #ifdef YES_DEBUG
-  if (hasToLog(l)) {
+  if (hasToLog(l, clz)) {
   	if (prntFunc != NULL) {
       prntFunc(clz, clz, l);
       prntFunc(" ", clz, l);
@@ -130,7 +152,6 @@ void logRaw(const char *clz, LogLevel l, const char *raw) {
 
 #include <log4ino/Colors.h>
 
-char logLevel = LOG_LEVEL;
 const char *logLevelStr[4] = {KYEL "DEBUG" KNRM, KBLU "INFO " KNRM,
                               KMAG "WARN " KNRM, KRED "ERROR" KNRM};
 
@@ -143,7 +164,7 @@ void setLogLevel(char level) {
 char getLogLevel(){return logLevel;}
 
 void log(const char *clz, LogLevel l, const char *format, ...) {
-  if (hasToLog(l)) {
+  if (hasToLog(l, clz)) {
     char buffer[MAX_LOG_MSG_LENGTH];
     va_list args;
     va_start(args, format);
@@ -167,7 +188,7 @@ void logHex(const char *clz, LogLevel l, const unsigned char *buf, int bytes) {
 }
 
 void logRaw(const char *clz, LogLevel l, const char *raw) {
-  if (hasToLog(l)) {
+  if (hasToLog(l, clz)) {
     printf("[%8.8s] [%s]: %s\n", clz, logLevelStr[l], raw);
   }
 }
