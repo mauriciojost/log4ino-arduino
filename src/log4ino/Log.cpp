@@ -32,18 +32,18 @@
 #define LOG_CLASS "LG"
 #define LOG_UNIT_EXPR_LEN 4
 char logLevel = LOG_LEVEL;
-char* logSettings = NULL;
+char* logOptions = NULL;
 
 bool hasToLog(LogLevel l, const char* clz) {
 
-  if (logSettings == NULL || strlen(logSettings) % 4 != 0) {
+  if (logOptions == NULL || strlen(logOptions) % 4 != 0) {
     return (logLevel <= l);
   }
 
-  for (int p = 0; p < strlen(logSettings); p += LOG_UNIT_EXPR_LEN) {
-    char clz_0 = logSettings[p+0];
-    char clz_1 = logSettings[p+1];
-    LogLevel l = (LogLevel)(logSettings[p+2] - '0');
+  for (int p = 0; p < strlen(logOptions); p += LOG_UNIT_EXPR_LEN) {
+    char clz_0 = logOptions[p+0];
+    char clz_1 = logOptions[p+1];
+    LogLevel l = (LogLevel)(logOptions[p+2] - '0');
     if(clz[0] == clz_0 && clz[1] == clz_1) { // direct match
       return (logLevel <= l);
     } else if (clz[0] == '?' && clz[1] == clz_1) { // one char match
@@ -55,6 +55,14 @@ bool hasToLog(LogLevel l, const char* clz) {
     }
   }
   return false;
+}
+
+void setLogOptions(const char *opts) {
+  logOptions = opts;
+}
+
+const char* getLogOptions() {
+  return logOptions;
 }
 
 #ifdef ARDUINO
@@ -80,7 +88,7 @@ void setupLog(void (*prnt)(const char *msg, const char *clz, LogLevel l)) {
 #ifdef YES_DEBUG
   prnt("-U-", LOG_CLASS, Debug);
   prntFunc = prnt;
-  logSettings = NULL;
+  logOptions = NULL;
 #endif // YES_DEBUG
 }
 
@@ -89,7 +97,7 @@ void setupLog(void (*prnt)(const char *msg, const char *clz, LogLevel l), const 
   // example of settings: LG0;AB1;??4; => LG class has log level 0, AB class has log level 1, the rest of the classes have log level 4.
 #ifdef YES_DEBUG
   setupLog(prnt);
-  logSettings = settings;
+  logOptions = settings;
 #endif // YES_DEBUG
 }
 

@@ -36,13 +36,16 @@ enum LogLevel { Debug = 0, Info = 1, Warn = 2, Error = 3, User = 4};
 
 bool hasToLog(LogLevel l, const char* clz);
 
-// Setup log print primitive and settings.
+// Setup log print primitive and options.
 void setupLog(void (*prnt)(const char *msg, const char *clz, LogLevel l));
-void setupLog(void (*prnt)(const char *msg, const char *clz, LogLevel l), const char* settings);
+void setupLog(void (*prnt)(const char *msg, const char *clz, LogLevel l), const char* options);
 
 // Set the level below which messages will be discarded.
 void setLogLevel(char level);
 char getLogLevel();
+
+void setLogOptions(const char *opts);
+const char* getLogOptions();
 
 // Log with a given class identifier and a log level, the formatted arguments
 void log(const char *clz, LogLevel l, const char *format, ...);
