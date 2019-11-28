@@ -31,6 +31,7 @@
 enum LogLevel { Debug = 0, Info = 1, Warn = 2, Error = 3, User = 4};
 
 void setupLog(void (*prnt)(const char *msg, const char *clz, LogLevel l));
+void setupLog(void (*prnt)(const char *msg, const char *clz, LogLevel l), const char* settings);
 void setLogLevel(char level);
 char getLogLevel();
 

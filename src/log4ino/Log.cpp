@@ -30,6 +30,11 @@
 #endif // MAX_LOG_MSG_LENGTH
 
 #define LOG_CLASS "LG"
+char* logSettings = NULL;
+
+bool hasToLog(LogLevel l) {
+  return (logLevel <= l);
+}
 
 #ifdef ARDUINO
 
@@ -55,12 +60,20 @@ void setupLog(void (*prnt)(const char *msg, const char *clz, LogLevel l)) {
 #ifdef YES_DEBUG
   prnt("-U-", LOG_CLASS, Debug);
   prntFunc = prnt;
+  logSettings = NULL;
+#endif // YES_DEBUG
+}
+
+void setupLog(void (*prnt)(const char *msg, const char *clz, LogLevel l), const char* settings) {
+#ifdef YES_DEBUG
+  setupLog(prnt);
+  logSettings = settings;
 #endif // YES_DEBUG
 }
 
 void log(const char *clz, LogLevel l, const char *format, ...) {
 #ifdef YES_DEBUG
-  if (logLevel <= l) {
+  if (hasToLog(l)) {
 
     char buffer[MAX_LOG_MSG_LENGTH];
     va_list args;
@@ -98,7 +111,7 @@ void logHex(const char *clz, LogLevel l, const unsigned char *buf, int bytes) {
 
 void logRaw(const char *clz, LogLevel l, const char *raw) {
 #ifdef YES_DEBUG
-  if (logLevel <= l) {
+  if (hasToLog(l)) {
   	if (prntFunc != NULL) {
       prntFunc(clz, clz, l);
       prntFunc(" ", clz, l);
@@ -122,6 +135,7 @@ const char *logLevelStr[4] = {KYEL "DEBUG" KNRM, KBLU "INFO " KNRM,
                               KMAG "WARN " KNRM, KRED "ERROR" KNRM};
 
 void setupLog(void (*prnt)(const char *msg, const char *clz, LogLevel l)) { }
+void setupLog(void (*prnt)(const char *msg, const char *clz, LogLevel l), const char* settings) { }
 
 void setLogLevel(char level) {
   logLevel = level;
@@ -129,7 +143,7 @@ void setLogLevel(char level) {
 char getLogLevel(){return logLevel;}
 
 void log(const char *clz, LogLevel l, const char *format, ...) {
-  if (logLevel <= l) {
+  if (hasToLog(l)) {
     char buffer[MAX_LOG_MSG_LENGTH];
     va_list args;
     va_start(args, format);
@@ -153,7 +167,7 @@ void logHex(const char *clz, LogLevel l, const unsigned char *buf, int bytes) {
 }
 
 void logRaw(const char *clz, LogLevel l, const char *raw) {
-  if (logLevel <= l) {
+  if (hasToLog(l)) {
     printf("[%8.8s] [%s]: %s\n", clz, logLevelStr[l], raw);
   }
 }
