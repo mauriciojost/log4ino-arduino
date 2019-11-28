@@ -13,3 +13,5 @@
 /pull_dependencies
 /serial_monitor
 /upload
+/coverage.xml
+/libs/Unity/

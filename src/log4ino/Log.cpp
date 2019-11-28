@@ -32,7 +32,7 @@
 #define LOG_CLASS "LG"
 #define LOG_UNIT_EXPR_LEN 4
 char logLevel = LOG_LEVEL;
-char* logOptions = NULL;
+const char* logOptions = NULL;
 
 bool hasToLog(LogLevel l, const char* clz) {
 
