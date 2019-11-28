@@ -37,24 +37,24 @@ const char* logOptions = NULL;
 bool hasToLog(LogLevel l, const char* clz) {
 
   if (logOptions == NULL || strlen(logOptions) % 4 != 0) {
-    return (logLevel <= l);
+    return (l >= logLevel);
   }
 
   for (int p = 0; p < strlen(logOptions); p += LOG_UNIT_EXPR_LEN) {
     char clz_0 = logOptions[p+0];
     char clz_1 = logOptions[p+1];
-    LogLevel l = (LogLevel)(logOptions[p+2] - '0');
+    LogLevel lg = (LogLevel)(logOptions[p+2] - '0');
     if(clz[0] == clz_0 && clz[1] == clz_1) { // direct match
-      return (logLevel <= l);
+      return (l >= lg);
     } else if (clz[0] == '?' && clz[1] == clz_1) { // one char match
-      return (logLevel <= l);
+      return (l >= lg);
     } else if (clz[0] == clz_0 && clz[1] == '?') { // one char match
-      return (logLevel <= l);
+      return (l >= lg);
     } else if (clz[0] == '?' && clz[1] == '?') { // no char match
-      return (logLevel <= l);
+      return (l >= lg);
     }
   }
-  return false;
+  return true;
 }
 
 void setLogOptions(const char *opts) {
@@ -89,15 +89,6 @@ void setupLog(void (*prnt)(const char *msg, const char *clz, LogLevel l)) {
   prnt("-U-", LOG_CLASS, Debug);
   prntFunc = prnt;
   logOptions = NULL;
-#endif // YES_DEBUG
-}
-
-void setupLog(void (*prnt)(const char *msg, const char *clz, LogLevel l), const char* settings) {
-
-  // example of settings: LG0;AB1;??4; => LG class has log level 0, AB class has log level 1, the rest of the classes have log level 4.
-#ifdef YES_DEBUG
-  setupLog(prnt);
-  logOptions = settings;
 #endif // YES_DEBUG
 }
 
@@ -164,7 +155,6 @@ const char *logLevelStr[4] = {KYEL "DEBUG" KNRM, KBLU "INFO " KNRM,
                               KMAG "WARN " KNRM, KRED "ERROR" KNRM};
 
 void setupLog(void (*prnt)(const char *msg, const char *clz, LogLevel l)) { }
-void setupLog(void (*prnt)(const char *msg, const char *clz, LogLevel l), const char* settings) { }
 
 void setLogLevel(char level) {
   logLevel = level;
