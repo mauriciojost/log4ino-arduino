@@ -37,21 +37,24 @@ void test_basic_behaviour() {
 
 void test_advanced_behaviour() {
   setupLog(fcn);
-  setLogOptions("AA1;BB3;??0;");
+  setLogOptions("AA1;BB3;??1;");
 
+  // matching AA1;
   TEST_ASSERT_EQUAL(false, hasToLog(Debug, "AA"));
   TEST_ASSERT_EQUAL(true, hasToLog(Info, "AA"));
   TEST_ASSERT_EQUAL(true, hasToLog(Warn, "AA"));
   TEST_ASSERT_EQUAL(true, hasToLog(Error, "AA"));
   TEST_ASSERT_EQUAL(true, hasToLog(User, "AA"));
 
+  // matching BB3;
   TEST_ASSERT_EQUAL(false, hasToLog(Debug, "BB"));
   TEST_ASSERT_EQUAL(false, hasToLog(Info, "BB"));
   TEST_ASSERT_EQUAL(false, hasToLog(Warn, "BB"));
   TEST_ASSERT_EQUAL(true, hasToLog(Error, "BB"));
   TEST_ASSERT_EQUAL(true, hasToLog(User, "BB"));
 
-  TEST_ASSERT_EQUAL(true, hasToLog(Debug, "CC"));
+  // matching ??1;
+  TEST_ASSERT_EQUAL(false, hasToLog(Debug, "CC"));
   TEST_ASSERT_EQUAL(true, hasToLog(Info, "CC"));
   TEST_ASSERT_EQUAL(true, hasToLog(Warn, "CC"));
   TEST_ASSERT_EQUAL(true, hasToLog(Error, "CC"));

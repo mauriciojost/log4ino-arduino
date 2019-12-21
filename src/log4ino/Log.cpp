@@ -41,16 +41,16 @@ bool hasToLog(LogLevel l, const char* clz) {
   }
 
   for (int p = 0; p < strlen(logOptions); p += LOG_UNIT_EXPR_LEN) {
-    char clz_0 = logOptions[p+0];
-    char clz_1 = logOptions[p+1];
+    char optClz0 = logOptions[p+0];
+    char optClz1 = logOptions[p+1];
     LogLevel lg = (LogLevel)(logOptions[p+2] - '0');
-    if(clz[0] == clz_0 && clz[1] == clz_1) { // direct match
+    if(clz[0] == optClz0 && clz[1] == optClz1) { // direct match
       return (l >= lg);
-    } else if (clz[0] == '?' && clz[1] == clz_1) { // one char match
+    } else if (clz[0] == '?' && clz[1] == optClz1) { // one char match
       return (l >= lg);
-    } else if (clz[0] == clz_0 && clz[1] == '?') { // one char match
+    } else if (clz[0] == optClz0 && clz[1] == '?') { // one char match
       return (l >= lg);
-    } else if (clz[0] == '?' && clz[1] == '?') { // no char match
+    } else if ('?' == optClz0 && '?' == optClz1) { // no char match
       return (l >= lg);
     }
   }
