@@ -31,16 +31,25 @@
 
 #define LOG_CLASS "LG"
 #define LOG_UNIT_EXPR_LEN 4
+
+#ifndef MAX_LOG_OPTIONS_RULES
+#define MAX_LOG_OPTIONS_RULES 8
+#endif // MAX_LOG_OPTIONS_RULES
+
 char logLevel = LOG_LEVEL;
-const char* logOptions = NULL;
+char logOptions[(MAX_LOG_OPTIONS_RULES * LOG_UNIT_EXPR_LEN) + 1];
+
+void disableLogOptions() {
+  strcpy(logOptions, " ");
+}
 
 bool hasToLog(LogLevel l, const char* clz) {
 
-  if (logOptions == NULL || strlen(logOptions) % 4 != 0) {
+  if (getLogOptions() == NULL) {
     return (l >= logLevel);
   }
 
-  for (int p = 0; p < strlen(logOptions); p += LOG_UNIT_EXPR_LEN) {
+  for (int p = 0; p < strlen(getLogOptions()); p += LOG_UNIT_EXPR_LEN) {
     char optClz0 = logOptions[p+0];
     char optClz1 = logOptions[p+1];
     LogLevel lg = (LogLevel)(logOptions[p+2] - '0');
@@ -54,15 +63,29 @@ bool hasToLog(LogLevel l, const char* clz) {
       return (l >= lg);
     }
   }
-  return true;
+  return (l >= logLevel);
 }
 
 void setLogOptions(const char *opts) {
-  logOptions = opts;
+  if (opts == NULL) {
+    disableLogOptions();
+  } else {
+    if (strlen(opts) % 4 == 0) {
+      strncpy(logOptions, opts, MAX_LOG_OPTIONS_RULES * LOG_UNIT_EXPR_LEN);
+      logOptions[MAX_LOG_OPTIONS_RULES * LOG_UNIT_EXPR_LEN] = 0;
+    } else {
+      log("LG", User, "Invalid log options");
+      disableLogOptions();
+    }
+  }
 }
 
 const char* getLogOptions() {
-  return logOptions;
+  if (logOptions[0] == ' ' || logOptions[0] == 0 || strlen(logOptions) < 1) {
+    return NULL;
+  } else {
+    return logOptions;
+  }
 }
 
 #ifdef ARDUINO
@@ -88,7 +111,7 @@ void setupLog(void (*prnt)(const char *msg, const char *clz, LogLevel l)) {
 #ifdef YES_DEBUG
   prnt("-U-", LOG_CLASS, Debug);
   prntFunc = prnt;
-  logOptions = NULL;
+  disableLogOptions();
 #endif // YES_DEBUG
 }
 
@@ -151,10 +174,11 @@ void logRaw(const char *clz, LogLevel l, const char *raw) {
 
 #include <log4ino/Colors.h>
 
-const char *logLevelStr[4] = {KYEL "DEBUG" KNRM, KBLU "INFO " KNRM,
-                              KMAG "WARN " KNRM, KRED "ERROR" KNRM};
+const char *logLevelStr[5] = {KYEL "DEBUG" KNRM, KBLU "INFO " KNRM, KMAG "WARN " KNRM, KRED "ERROR" KNRM, KBLU "USER" KNRM};
 
-void setupLog(void (*prnt)(const char *msg, const char *clz, LogLevel l)) { }
+void setupLog(void (*prnt)(const char *msg, const char *clz, LogLevel l)) {
+  disableLogOptions(); 
+}
 
 void setLogLevel(char level) {
   logLevel = level;

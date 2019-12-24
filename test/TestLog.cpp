@@ -19,6 +19,8 @@ void fcn(const char *msg, const char *clz, LogLevel l) {}
 void test_basic_behaviour() {
   setupLog(fcn);
 
+  TEST_ASSERT_EQUAL(NULL, getLogOptions());
+
   setLogLevel((char)Debug);
   TEST_ASSERT_EQUAL(true, hasToLog(Debug, "AA"));
   TEST_ASSERT_EQUAL(true, hasToLog(Info, "AA"));
@@ -38,6 +40,8 @@ void test_basic_behaviour() {
 void test_advanced_behaviour() {
   setupLog(fcn);
   setLogOptions("AA1;BB3;??1;");
+
+  TEST_ASSERT_EQUAL_STRING("AA1;BB3;??1;", getLogOptions());
 
   // matching AA1;
   TEST_ASSERT_EQUAL(false, hasToLog(Debug, "AA"));
@@ -62,10 +66,23 @@ void test_advanced_behaviour() {
 
 }
 
+void test_log_options_set() {
+  setupLog(fcn);
+  setLogOptions("AA1;AA1;AA1;AA1;AA1;AA1;AA1;AA1;");
+  TEST_ASSERT_EQUAL_STRING("AA1;AA1;AA1;AA1;AA1;AA1;AA1;AA1;", getLogOptions());
+  setLogOptions("AA1;AA1;AA1;AA1;AA1;AA1;AA1;AA1;AA1;"); // one more, discarded
+  TEST_ASSERT_EQUAL_STRING("AA1;AA1;AA1;AA1;AA1;AA1;AA1;AA1;", getLogOptions());
+  setLogOptions(NULL);
+  TEST_ASSERT_EQUAL(NULL, getLogOptions());
+  setLogOptions("invalidlogopts"); // invalid
+  TEST_ASSERT_EQUAL(NULL, getLogOptions());
+}
+
 int main() {
   UNITY_BEGIN();
   RUN_TEST(test_basic_behaviour);
   RUN_TEST(test_advanced_behaviour);
+  RUN_TEST(test_log_options_set);
   return (UNITY_END());
 }
 
