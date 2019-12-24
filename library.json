@@ -1,6 +1,6 @@
 {
   "name": "log4ino-arduino",
-  "version": "2.1.4-SNAPSHOT",
+  "version": "2.2.0",
   "keywords": "log, basic",
   "description": "Basic logging framework for Arduino",
   "repository": {
