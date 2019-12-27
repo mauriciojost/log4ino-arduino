@@ -88,11 +88,16 @@ const char* getLogOptions() {
   }
 }
 
-#ifdef ARDUINO
-
-// ARDUINO, SO ON-BOARD EXECUTION
 #ifdef YES_DEBUG
+
 const char *logLevelStr[5] = {"D", "I", "W", "E", "U"};
+
+#ifdef X86_64
+#include <log4ino/Colors.h>
+const char *logLevelStrRich[5] = {KYEL "DEBUG" KNRM, KBLU "INFO " KNRM, KMAG "WARN " KNRM, KRED "ERROR" KNRM, KBLU "USER" KNRM};
+#endif // X86_64
+
+
 void (*prntFunc)(const char *msg, const char *clz, LogLevel l) = NULL;
 #endif // YES_DEBUG
 
@@ -117,7 +122,7 @@ void setupLog(void (*prnt)(const char *msg, const char *clz, LogLevel l)) {
 
 void log(const char *clz, LogLevel l, const char *format, ...) {
 #ifdef YES_DEBUG
-  if (hasToLog(l, clz)) {
+  if (hasToLog(l, clz) && prntFunc != NULL) {
 
     char buffer[MAX_LOG_MSG_LENGTH];
     va_list args;
@@ -130,10 +135,12 @@ void log(const char *clz, LogLevel l, const char *format, ...) {
     snprintf(bufferTotal, MAX_LOG_MSG_LENGTH, "%s %s %s\n", clz, logLevelStr[l],
              buffer);
     bufferTotal[MAX_LOG_MSG_LENGTH - 1] = 0;
+    bufferTotal[MAX_LOG_MSG_LENGTH - 2] = '\n';
+#ifdef X86_64 // print anyway
+    printf("[%8.8s] [%s]: %s\n", clz, logLevelStrRich[l], bufferTotal);
+#endif // X86_64
 
-    if (prntFunc != NULL) {
-      prntFunc(bufferTotal, clz, l);
-    }
+    prntFunc(bufferTotal, clz, l);
   }
 #endif // YES_DEBUG
 }
@@ -142,7 +149,7 @@ void log(const char *clz, LogLevel l, const char *format, ...) {
 void logHex(const char *clz, LogLevel l, const unsigned char *buf, int bytes) {
 #ifdef YES_DEBUG
   char buffer[MAX_LOG_MSG_LENGTH];
-  char val[3];
+  char val[4];
   buffer[0] = 0;
   for (int i = 0; i < bytes; i++) {
     sprintf(val, "%.2x\n", buf[i]);
@@ -167,52 +174,3 @@ void logRaw(const char *clz, LogLevel l, const char *raw) {
   }
 #endif // YES_DEBUG
 }
-
-#endif
-
-#ifdef X86_64
-
-#include <log4ino/Colors.h>
-
-const char *logLevelStr[5] = {KYEL "DEBUG" KNRM, KBLU "INFO " KNRM, KMAG "WARN " KNRM, KRED "ERROR" KNRM, KBLU "USER" KNRM};
-
-void setupLog(void (*prnt)(const char *msg, const char *clz, LogLevel l)) {
-  disableLogOptions(); 
-}
-
-void setLogLevel(char level) {
-  logLevel = level;
-}
-char getLogLevel(){return logLevel;}
-
-void log(const char *clz, LogLevel l, const char *format, ...) {
-  if (hasToLog(l, clz)) {
-    char buffer[MAX_LOG_MSG_LENGTH];
-    va_list args;
-    va_start(args, format);
-    vsnprintf(buffer, MAX_LOG_MSG_LENGTH, format, args);
-    buffer[MAX_LOG_MSG_LENGTH - 1] = 0;
-    printf("[%8.8s] [%s]: %s\n", clz, logLevelStr[l], buffer);
-    va_end(args);
-  }
-}
-
-void logHex(const char *clz, LogLevel l, const unsigned char *buf, int bytes) {
-  char buffer[MAX_LOG_MSG_LENGTH];
-  char val[3];
-  buffer[0] = 0;
-  for (int i = 0; i < bytes; i++) {
-    sprintf(val, "%.2x", buf[i]);
-    strncat(buffer, val, MAX_LOG_MSG_LENGTH);
-  }
-  buffer[MAX_LOG_MSG_LENGTH - 1] = 0;
-  log(clz, l, buffer);
-}
-
-void logRaw(const char *clz, LogLevel l, const char *raw) {
-  if (hasToLog(l, clz)) {
-    printf("[%8.8s] [%s]: %s\n", clz, logLevelStr[l], raw);
-  }
-}
-
-#endif // X86_64

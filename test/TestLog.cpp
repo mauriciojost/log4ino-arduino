@@ -9,14 +9,33 @@
 
 #define LOG_LEVEL 0
 
+char buffer[1024];
+
 void setUp() {}
 
 void tearDown() {}
 
 
-void fcn(const char *msg, const char *clz, LogLevel l) {}
+void fcn(const char *msg, const char *clz, LogLevel l) {
+  strcpy(buffer, msg);
+}
 
 void test_basic_behaviour() {
+  setupLog(fcn);
+
+  setLogOptions(NULL);
+  setLogLevel((char)Debug);
+
+  buffer[0] = 0;
+  log("AA", Debug, "MSG");
+  TEST_ASSERT_EQUAL_STRING("AA D MSG\n", buffer);
+
+  log("AA", Debug, "01234567890123456789"); // should be limited to 16
+  TEST_ASSERT_EQUAL_STRING("AA D 012345678\n", buffer);
+
+}
+
+void test_log_options_basic_behaviour() {
   setupLog(fcn);
 
   TEST_ASSERT_EQUAL(NULL, getLogOptions());
@@ -37,7 +56,7 @@ void test_basic_behaviour() {
 
 }
 
-void test_advanced_behaviour() {
+void test_log_options_advanced_behaviour() {
   setupLog(fcn);
   setLogOptions("AA1;BB3;??1;");
 
@@ -81,7 +100,8 @@ void test_log_options_set() {
 int main() {
   UNITY_BEGIN();
   RUN_TEST(test_basic_behaviour);
-  RUN_TEST(test_advanced_behaviour);
+  RUN_TEST(test_log_options_basic_behaviour);
+  RUN_TEST(test_log_options_advanced_behaviour);
   RUN_TEST(test_log_options_set);
   return (UNITY_END());
 }
