@@ -122,7 +122,7 @@ void setupLog(void (*prnt)(const char *msg, const char *clz, LogLevel l)) {
 
 void log(const char *clz, LogLevel l, const char *format, ...) {
 #ifdef YES_DEBUG
-  if (hasToLog(l, clz) && prntFunc != NULL) {
+  if (hasToLog(l, clz)) {
 
     char buffer[MAX_LOG_MSG_LENGTH];
     va_list args;
@@ -139,8 +139,9 @@ void log(const char *clz, LogLevel l, const char *format, ...) {
 #ifdef X86_64 // print anyway
     printf("[%8.8s] [%s]: %s\n", clz, logLevelStrRich[l], bufferTotal);
 #endif // X86_64
-
-    prntFunc(bufferTotal, clz, l);
+    if (prntFunc != NULL) {
+      prntFunc(bufferTotal, clz, l);
+    }
   }
 #endif // YES_DEBUG
 }
