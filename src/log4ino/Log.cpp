@@ -38,6 +38,7 @@
 
 char logLevel = LOG_LEVEL;
 char logOptions[(MAX_LOG_OPTIONS_RULES * LOG_UNIT_EXPR_LEN) + 1];
+char *logStaticBuffer = NULL;
 
 void disableLogOptions() {
   strcpy(logOptions, " ");
@@ -98,7 +99,7 @@ const char *logLevelStrRich[5] = {KYEL "DEBUG" KNRM, KBLU "INFO " KNRM, KMAG "WA
 #endif // X86_64
 
 
-void (*prntFunc)(const char *msg, const char *clz, LogLevel l) = NULL;
+void (*prntFunc)(const char *msg, const char *clz, LogLevel l, bool newline) = NULL;
 #endif // YES_DEBUG
 
 void setLogLevel(char level) { 
@@ -112,11 +113,12 @@ char getLogLevel(){
 #endif // YES_DEBUG
 }
 
-void setupLog(void (*prnt)(const char *msg, const char *clz, LogLevel l)) {
+void setupLog(void (*prnt)(const char *msg, const char *clz, LogLevel l, bool newline)) {
 #ifdef YES_DEBUG
-  prnt("-U-", LOG_CLASS, Debug);
+  prnt("-U-", LOG_CLASS, Debug, true);
   prntFunc = prnt;
   disableLogOptions();
+  logStaticBuffer = new char[MAX_LOG_MSG_LENGTH];
 #endif // YES_DEBUG
 }
 
@@ -124,24 +126,29 @@ void log(const char *clz, LogLevel l, const char *format, ...) {
 #ifdef YES_DEBUG
   if (hasToLog(l, clz)) {
 
-    char buffer[MAX_LOG_MSG_LENGTH];
+    snprintf(logStaticBuffer, MAX_LOG_MSG_LENGTH, "%s %s ", clz, logLevelStr[l]);
+    logStaticBuffer[MAX_LOG_MSG_LENGTH - 1] = 0;
+    if (prntFunc != NULL) {
+      prntFunc(logStaticBuffer, clz, l, true);
+    }
+#ifdef X86_64 // print anyway
+    printf("[%8.8s] [%s]: ", clz, logLevelStrRich[l]);
+#endif // X86_64
+
     va_list args;
     va_start(args, format);
-    vsnprintf(buffer, MAX_LOG_MSG_LENGTH, format, args);
+    vsnprintf(logStaticBuffer, MAX_LOG_MSG_LENGTH, format, args);
     va_end(args);
-    buffer[MAX_LOG_MSG_LENGTH - 1] = 0;
+    strncat(logStaticBuffer, "\n", MAX_LOG_MSG_LENGTH);
+    logStaticBuffer[MAX_LOG_MSG_LENGTH - 1] = 0;
+    logStaticBuffer[MAX_LOG_MSG_LENGTH - 2] = '\n';
 
-    char bufferTotal[MAX_LOG_MSG_LENGTH];
-    snprintf(bufferTotal, MAX_LOG_MSG_LENGTH, "%s %s %s\n", clz, logLevelStr[l],
-             buffer);
-    bufferTotal[MAX_LOG_MSG_LENGTH - 1] = 0;
-    bufferTotal[MAX_LOG_MSG_LENGTH - 2] = '\n';
-#ifdef X86_64 // print anyway
-    printf("[%8.8s] [%s]: %s\n", clz, logLevelStrRich[l], bufferTotal);
-#endif // X86_64
     if (prntFunc != NULL) {
-      prntFunc(bufferTotal, clz, l);
+      prntFunc(logStaticBuffer, clz, l, false);
     }
+#ifdef X86_64 // print anyway
+    printf("%s\n", logStaticBuffer);
+#endif // X86_64
   }
 #endif // YES_DEBUG
 }
@@ -165,12 +172,12 @@ void logRaw(const char *clz, LogLevel l, const char *raw) {
 #ifdef YES_DEBUG
   if (hasToLog(l, clz)) {
   	if (prntFunc != NULL) {
-      prntFunc(clz, clz, l);
-      prntFunc(" ", clz, l);
-      prntFunc(logLevelStr[l], clz, l);
-      prntFunc(" ", clz, l);
-      prntFunc(raw, clz, l);
-      prntFunc("\n", clz, l);
+      prntFunc(clz, clz, l, true);
+      prntFunc(" ", clz, l, false);
+      prntFunc(logLevelStr[l], clz, l, false);
+      prntFunc(" ", clz, l, false);
+      prntFunc(raw, clz, l, false);
+      prntFunc("\n", clz, l, false);
   	}
   }
 #endif // YES_DEBUG

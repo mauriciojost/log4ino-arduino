@@ -16,8 +16,11 @@ void setUp() {}
 void tearDown() {}
 
 
-void fcn(const char *msg, const char *clz, LogLevel l) {
-  strcpy(buffer, msg);
+void fcn(const char *msg, const char *clz, LogLevel l, bool newline) {
+  if (newline) {
+    buffer[0] = 0;
+  }
+  strncat(buffer, msg, 1024);
 }
 
 void test_basic_behaviour() {
@@ -26,12 +29,11 @@ void test_basic_behaviour() {
   setLogOptions(NULL);
   setLogLevel((char)Debug);
 
-  buffer[0] = 0;
-  log("AA", Debug, "MSG");
-  TEST_ASSERT_EQUAL_STRING("AA D MSG\n", buffer);
+  log("CZ", Debug, "MSG");
+  TEST_ASSERT_EQUAL_STRING("CZ D MSG\n", buffer);
 
-  log("AA", Debug, "01234567890123456789"); // should be limited to 16
-  TEST_ASSERT_EQUAL_STRING("AA D 012345678\n", buffer);
+  log("CZ", Debug, "01234567890123456789"); // should be limited
+  TEST_ASSERT_EQUAL_STRING("CZ D 01234567890123\n", buffer);
 
 }
 

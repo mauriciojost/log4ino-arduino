@@ -37,7 +37,7 @@ enum LogLevel { Debug = 0, Info = 1, Warn = 2, Error = 3, User = 4};
 bool hasToLog(LogLevel l, const char* clz);
 
 // Setup log print primitive and options.
-void setupLog(void (*prnt)(const char *msg, const char *clz, LogLevel l));
+void setupLog(void (*prnt)(const char *msg, const char *clz, LogLevel l, bool newline));
 
 // Set the level below which messages will be discarded.
 void setLogLevel(char level);
