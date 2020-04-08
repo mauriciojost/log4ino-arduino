@@ -124,13 +124,14 @@ void setupLog(void (*prnt)(const char *msg, const char *clz, LogLevel l, bool ne
 
 void log(const char *clz, LogLevel l, const char *format, ...) {
 #ifdef YES_DEBUG
+  if (prntFunc == NULL) // if not initialized
+    return;
+
   if (hasToLog(l, clz)) {
 
     snprintf(logStaticBuffer, MAX_LOG_MSG_LENGTH, "%s %s ", clz, logLevelStr[l]);
     logStaticBuffer[MAX_LOG_MSG_LENGTH - 1] = 0;
-    if (prntFunc != NULL) {
-      prntFunc(logStaticBuffer, clz, l, true);
-    }
+    prntFunc(logStaticBuffer, clz, l, true);
 #ifdef X86_64 // print anyway
     printf("[%8.8s] [%s]: ", clz, logLevelStrRich[l]);
 #endif // X86_64
@@ -142,10 +143,7 @@ void log(const char *clz, LogLevel l, const char *format, ...) {
     strncat(logStaticBuffer, "\n", MAX_LOG_MSG_LENGTH);
     logStaticBuffer[MAX_LOG_MSG_LENGTH - 1] = 0;
     logStaticBuffer[MAX_LOG_MSG_LENGTH - 2] = '\n';
-
-    if (prntFunc != NULL) {
-      prntFunc(logStaticBuffer, clz, l, false);
-    }
+    prntFunc(logStaticBuffer, clz, l, false);
 #ifdef X86_64 // print anyway
     printf("%s\n", logStaticBuffer);
 #endif // X86_64
