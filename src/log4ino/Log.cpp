@@ -91,11 +91,11 @@ const char* getLogOptions() {
 
 #ifdef YES_DEBUG
 
-const char *logLevelStr[5] = {"D", "I", "W", "E", "U"};
+const char *logLevelStr[6] = {"F", "D", "I", "W", "E", "U"};
 
 #ifdef X86_64
 #include <log4ino/Colors.h>
-const char *logLevelStrRich[5] = {KYEL "DEBUG" KNRM, KBLU "INFO " KNRM, KMAG "WARN " KNRM, KRED "ERROR" KNRM, KBLU "USER" KNRM};
+const char *logLevelStrRich[6] = {KYEL "FINE" KNRM, KYEL "DEBUG" KNRM, KBLU "INFO " KNRM, KMAG "WARN " KNRM, KRED "ERROR" KNRM, KBLU "USER" KNRM};
 #endif // X86_64
 
 
@@ -115,7 +115,7 @@ char getLogLevel(){
 
 void setupLog(void (*prnt)(const char *msg, const char *clz, LogLevel l, bool newline)) {
 #ifdef YES_DEBUG
-  prnt("-U-", LOG_CLASS, Debug, true);
+  prnt("-U-\n", LOG_CLASS, Debug, true);
   prntFunc = prnt;
   disableLogOptions();
   logStaticBuffer = new char[MAX_LOG_MSG_LENGTH];

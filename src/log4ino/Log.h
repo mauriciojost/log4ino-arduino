@@ -27,12 +27,13 @@
 #define LOG_LEVEL 0
 #endif // LOG_LEVEL
 
-// Debug 0
-// Info 1
-// Warning 2
-// Error 3
-// User (highest level, used for interaction with the user)
-enum LogLevel { Debug = 0, Info = 1, Warn = 2, Error = 3, User = 4};
+// Fine 0
+// Debug 1
+// Info 2
+// Warning 3
+// Error 4
+// User 5 (highest level, used for interaction with the user)
+enum LogLevel { Fine = 0, Debug = 1, Info = 2, Warn = 3, Error = 4, User = 5};
 
 bool hasToLog(LogLevel l, const char* clz);
 
