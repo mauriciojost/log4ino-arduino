@@ -40,6 +40,20 @@ char logLevel = LOG_LEVEL;
 char logOptions[(MAX_LOG_OPTIONS_RULES * LOG_UNIT_EXPR_LEN) + 1];
 char *logStaticBuffer = NULL;
 
+#define LOG_FINE(str, ...) (log(__FILE__, Fine, str, __VA_ARGS__ );)
+#define LOG_DEBUG(str, ...) (log(__FILE__, Debug, str, __VA_ARGS__ );)
+#define LOG_INFO(str, ...) (log(__FILE__, Info, str, __VA_ARGS__ );)
+#define LOG_WARN(str, ...) (log(__FILE__, Warn, str, __VA_ARGS__ );)
+#define LOG_ERROR(str, ...) (log(__FILE__, Error, str, __VA_ARGS__ );)
+#define LOG_USER(str, ...) (log(__FILE__, User, str, __VA_ARGS__ );)
+
+#define LOG_FINE_RAW(str) (log(__FILE__, Fine, str);)
+#define LOG_DEBUG_RAW(str) (log(__FILE__, Debug, str);)
+#define LOG_INFO_RAW(str) (log(__FILE__, Info, str);)
+#define LOG_WARN_RAW(str) (log(__FILE__, Warn, str);)
+#define LOG_ERROR_RAW(str) (log(__FILE__, Error, str);)
+#define LOG_USER_RAW(str) (log(__FILE__, User, str);)
+
 void disableLogOptions() {
   strcpy(logOptions, " ");
 }
