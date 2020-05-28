@@ -36,23 +36,8 @@
 #define MAX_LOG_OPTIONS_RULES 8
 #endif // MAX_LOG_OPTIONS_RULES
 
-char logLevel = LOG_LEVEL;
 char logOptions[(MAX_LOG_OPTIONS_RULES * LOG_UNIT_EXPR_LEN) + 1];
 char *logStaticBuffer = NULL;
-
-#define LOG_FINE(str, ...) (log(__FILE__, Fine, str, __VA_ARGS__ );)
-#define LOG_DEBUG(str, ...) (log(__FILE__, Debug, str, __VA_ARGS__ );)
-#define LOG_INFO(str, ...) (log(__FILE__, Info, str, __VA_ARGS__ );)
-#define LOG_WARN(str, ...) (log(__FILE__, Warn, str, __VA_ARGS__ );)
-#define LOG_ERROR(str, ...) (log(__FILE__, Error, str, __VA_ARGS__ );)
-#define LOG_USER(str, ...) (log(__FILE__, User, str, __VA_ARGS__ );)
-
-#define LOG_FINE_RAW(str) (log(__FILE__, Fine, str);)
-#define LOG_DEBUG_RAW(str) (log(__FILE__, Debug, str);)
-#define LOG_INFO_RAW(str) (log(__FILE__, Info, str);)
-#define LOG_WARN_RAW(str) (log(__FILE__, Warn, str);)
-#define LOG_ERROR_RAW(str) (log(__FILE__, Error, str);)
-#define LOG_USER_RAW(str) (log(__FILE__, User, str);)
 
 void disableLogOptions() {
   strcpy(logOptions, " ");
@@ -61,13 +46,43 @@ void disableLogOptions() {
 bool hasToLog(LogLevel l, const char* clz) {
 
   if (getLogOptions() == NULL) {
-    return (l >= logLevel);
+    return true;
   }
 
   for (int p = 0; p < strlen(getLogOptions()); p += LOG_UNIT_EXPR_LEN) {
     char optClz0 = logOptions[p+0];
     char optClz1 = logOptions[p+1];
-    LogLevel lg = (LogLevel)(logOptions[p+2] - '0');
+    char optLogLvl = logOptions[p+2];
+    LogLevel lg;
+    switch (optLogLvl) {
+      case 'f':
+      case 'F':
+        lg = Fine;
+        break;
+      case 'd':
+      case 'D':
+        lg = Debug;
+        break;
+      case 'i':
+      case 'I':
+        lg = Info;
+        break;
+      case 'w':
+      case 'W':
+        lg = Warn;
+        break;
+      case 'e':
+      case 'E':
+        lg = Error;
+        break;
+      case 'u':
+      case 'U':
+        lg = User;
+        break;
+      default:
+        lg = (LogLevel)(optLogLvl - '0');
+        break;
+    }
     if(clz[0] == optClz0 && clz[1] == optClz1) { // direct match
       return (l >= lg);
     } else if (clz[0] == '?' && clz[1] == optClz1) { // one char match
@@ -78,7 +93,7 @@ bool hasToLog(LogLevel l, const char* clz) {
       return (l >= lg);
     }
   }
-  return (l >= logLevel);
+  return true;
 }
 
 void setLogOptions(const char *opts) {
@@ -115,17 +130,6 @@ const char *logLevelStrRich[6] = {KYEL "FINE" KNRM, KYEL "DEBUG" KNRM, KBLU "INF
 
 void (*prntFunc)(const char *msg, const char *clz, LogLevel l, bool newline) = NULL;
 #endif // YES_DEBUG
-
-void setLogLevel(char level) { 
-#ifdef YES_DEBUG
-  logLevel = level;
-#endif // YES_DEBUG
-}
-char getLogLevel(){
-#ifdef YES_DEBUG
-  return logLevel;
-#endif // YES_DEBUG
-}
 
 void setupLog(void (*prnt)(const char *msg, const char *clz, LogLevel l, bool newline)) {
 #ifdef YES_DEBUG

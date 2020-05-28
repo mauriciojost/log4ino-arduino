@@ -40,10 +40,6 @@ bool hasToLog(LogLevel l, const char* clz);
 // Setup log print primitive and options.
 void setupLog(void (*prnt)(const char *msg, const char *clz, LogLevel l, bool newline));
 
-// Set the level below which messages will be discarded.
-void setLogLevel(char level);
-char getLogLevel();
-
 void setLogOptions(const char *opts);
 const char* getLogOptions();
 

@@ -7,8 +7,6 @@
 #include <string.h>
 #include <unity.h>
 
-#define LOG_LEVEL 0
-
 char buffer[1024];
 
 void setUp() {}
@@ -26,8 +24,7 @@ void fcn(const char *msg, const char *clz, LogLevel l, bool newline) {
 void test_basic_behaviour() {
   setupLog(fcn);
 
-  setLogOptions(NULL);
-  setLogLevel((char)Debug);
+  setLogOptions("??D;");
 
   log("CZ", Debug, "MSG");
   TEST_ASSERT_EQUAL_STRING("CZ D MSG\n", buffer);
@@ -42,14 +39,14 @@ void test_log_options_basic_behaviour() {
 
   TEST_ASSERT_EQUAL(NULL, getLogOptions());
 
-  setLogLevel((char)Debug);
+  setLogOptions("??d;");
   TEST_ASSERT_EQUAL(true, hasToLog(Debug, "AA"));
   TEST_ASSERT_EQUAL(true, hasToLog(Info, "AA"));
   TEST_ASSERT_EQUAL(true, hasToLog(Warn, "AA"));
   TEST_ASSERT_EQUAL(true, hasToLog(Error, "AA"));
   TEST_ASSERT_EQUAL(true, hasToLog(User, "AA"));
 
-  setLogLevel((char)Error);
+  setLogOptions("??E;");
   TEST_ASSERT_EQUAL(false, hasToLog(Debug, "AA"));
   TEST_ASSERT_EQUAL(false, hasToLog(Info, "AA"));
   TEST_ASSERT_EQUAL(false, hasToLog(Warn, "AA"));
@@ -60,9 +57,9 @@ void test_log_options_basic_behaviour() {
 
 void test_log_options_advanced_behaviour() {
   setupLog(fcn);
-  setLogOptions("AA1;BB3;??1;");
+  setLogOptions("AA2;BB4;??2;");
 
-  TEST_ASSERT_EQUAL_STRING("AA1;BB3;??1;", getLogOptions());
+  TEST_ASSERT_EQUAL_STRING("AA2;BB4;??2;", getLogOptions());
 
   // matching AA1;
   TEST_ASSERT_EQUAL(false, hasToLog(Debug, "AA"));
