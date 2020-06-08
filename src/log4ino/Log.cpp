@@ -25,6 +25,10 @@
 #include <stdio.h>
 #include <stdarg.h>
 
+#ifndef DEFAULT_LOG_LEVEL
+#define DEFAULT_LOG_LEVEL Fine
+#endif // DEFAULT_LOG_LEVEL
+
 #ifndef MAX_LOG_MSG_LENGTH
 #define MAX_LOG_MSG_LENGTH 16
 #endif // MAX_LOG_MSG_LENGTH
@@ -46,7 +50,7 @@ void disableLogOptions() {
 bool hasToLog(LogLevel l, const char* clz) {
 
   if (getLogOptions() == NULL) {
-    return true;
+    return (l >= DEFAULT_LOG_LEVEL);
   }
 
   for (int p = 0; p < strlen(getLogOptions()); p += LOG_UNIT_EXPR_LEN) {
@@ -93,7 +97,7 @@ bool hasToLog(LogLevel l, const char* clz) {
       return (l >= lg);
     }
   }
-  return true;
+  return (l >= DEFAULT_LOG_LEVEL);
 }
 
 void setLogOptions(const char *opts) {
