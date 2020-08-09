@@ -49,7 +49,7 @@ void disableLogOptions() {
 
 bool hasToLog(LogLevel l, const char* clz) {
 
-  const char opts = getLogOptions();
+  const char* opts = getLogOptions();
   if (opts == NULL) {
     return (l >= DEFAULT_LOG_LEVEL);
   }
