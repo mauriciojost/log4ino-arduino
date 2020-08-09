@@ -115,6 +115,9 @@ void setLogOptions(const char *opts) {
 }
 
 const char* getLogOptions() {
+#ifdef LOG_FIXED_OPTIONS
+  return LOG_FIXED_OPTIONS;
+#else // LOG_FIXED_OPTIONS
   if (logOptions[0] == ' ' || logOptions[0] == 0 ) {
     return NULL;
   } else {
@@ -125,6 +128,7 @@ const char* getLogOptions() {
       return logOptions;
     }
   }
+#endif // LOG_FIXED_OPTIONS
 }
 
 #ifdef YES_DEBUG
