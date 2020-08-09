@@ -17,4 +17,4 @@ function hl() {
 }
 
 
-cat - | hl red '.* E .*' | hl yellow '.* W .*' | hl gray '.* D .*' | hl blue '.* U .*'
+cat - | hl red '.* E .*' | hl yellow '.* W .*' | hl gray '.* D .*' | hl gray '.* F .*' | hl blue '.* U .*'
