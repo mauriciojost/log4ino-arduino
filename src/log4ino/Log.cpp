@@ -40,11 +40,17 @@
 #define MAX_LOG_OPTIONS_RULES 8
 #endif // MAX_LOG_OPTIONS_RULES
 
+#define LOG_OPTIONS_DISABLED " "
+
+#ifndef LOG_OPTIONS_DEFAULT 
+#define LOG_OPTIONS_DEFAULT LOG_OPTIONS_DISABLED
+#endif // LOG_OPTIONS_DEFAULT
+
 char logOptions[(MAX_LOG_OPTIONS_RULES * LOG_UNIT_EXPR_LEN) + 1];
 char *logStaticBuffer = NULL;
 
 void disableLogOptions() {
-  strcpy(logOptions, " ");
+  strcpy(logOptions, LOG_OPTIONS_DISABLED);
 }
 
 bool hasToLog(LogLevel l, const char* clz) {
@@ -54,7 +60,7 @@ bool hasToLog(LogLevel l, const char* clz) {
     return (l >= DEFAULT_LOG_LEVEL);
   }
 
-  for (int p = 0; p < strlen(opts); p += LOG_UNIT_EXPR_LEN) {
+  for (unsigned int p = 0; p < strlen(opts); p += LOG_UNIT_EXPR_LEN) {
     char optClz0 = opts[p+0];
     char optClz1 = opts[p+1];
     char optLogLvl = opts[p+2];
@@ -103,14 +109,13 @@ bool hasToLog(LogLevel l, const char* clz) {
 
 void setLogOptions(const char *opts) {
   if (opts == NULL) {
-    disableLogOptions();
+      log("LG", User, "Invalid log options");
   } else {
     if (strlen(opts) % 4 == 0) {
       strncpy(logOptions, opts, MAX_LOG_OPTIONS_RULES * LOG_UNIT_EXPR_LEN);
       logOptions[MAX_LOG_OPTIONS_RULES * LOG_UNIT_EXPR_LEN] = 0;
     } else {
       log("LG", User, "Invalid log options");
-      disableLogOptions();
     }
   }
 }
@@ -149,7 +154,7 @@ void setupLog(void (*prnt)(const char *msg, const char *clz, LogLevel l, bool ne
 #ifdef YES_DEBUG
   prnt("-U-\n", LOG_CLASS, Debug, true);
   prntFunc = prnt;
-  disableLogOptions();
+  strcpy(logOptions, LOG_OPTIONS_DEFAULT);
   logStaticBuffer = new char[MAX_LOG_MSG_LENGTH];
 #endif // YES_DEBUG
 }
