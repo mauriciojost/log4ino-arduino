@@ -49,14 +49,15 @@ void disableLogOptions() {
 
 bool hasToLog(LogLevel l, const char* clz) {
 
-  if (getLogOptions() == NULL) {
+  const char opts = getLogOptions();
+  if (opts == NULL) {
     return (l >= DEFAULT_LOG_LEVEL);
   }
 
-  for (int p = 0; p < strlen(getLogOptions()); p += LOG_UNIT_EXPR_LEN) {
-    char optClz0 = logOptions[p+0];
-    char optClz1 = logOptions[p+1];
-    char optLogLvl = logOptions[p+2];
+  for (int p = 0; p < strlen(opts); p += LOG_UNIT_EXPR_LEN) {
+    char optClz0 = opts[p+0];
+    char optClz1 = opts[p+1];
+    char optLogLvl = opts[p+2];
     LogLevel lg;
     switch (optLogLvl) {
       case 'f':
