@@ -115,10 +115,15 @@ void setLogOptions(const char *opts) {
 }
 
 const char* getLogOptions() {
-  if (logOptions[0] == ' ' || logOptions[0] == 0 || strlen(logOptions) < 1) {
+  if (logOptions[0] == ' ' || logOptions[0] == 0 ) {
     return NULL;
   } else {
-    return logOptions;
+    unsigned int len = strlen(logOptions);
+    if (len < 1 || len % 4 != 0) {
+      return NULL;
+    } else {
+      return logOptions;
+    }
   }
 }
 
