@@ -10,6 +10,7 @@ function hl() {
     fg_color_map[magenta]=35
     fg_color_map[cyan]=36
     fg_color_map[gray]=90
+    fg_color_map[lgray]=37
 
     fg_c=$(echo -e "\e[1;${fg_color_map[$1]}m")
     c_rs=$'\e[0m'
@@ -17,4 +18,4 @@ function hl() {
 }
 
 
-cat - | hl red '.* E .*' | hl yellow '.* W .*' | hl gray '.* D .*' | hl gray '.* F .*' | hl blue '.* U .*'
+cat - | hl red '.* E .*' | hl yellow '.* W .*' | hl lgray '.* I .*' | hl gray '.* F .*' | hl blue '.* U .*'
