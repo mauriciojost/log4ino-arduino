@@ -90,10 +90,10 @@ void test_log_options_set() {
   TEST_ASSERT_EQUAL_STRING("AA1;AA1;AA1;AA1;AA1;AA1;AA1;AA1;", getLogOptions());
   setLogOptions("AA1;AA1;AA1;AA1;AA1;AA1;AA1;AA1;AA1;"); // one more, discarded
   TEST_ASSERT_EQUAL_STRING("AA1;AA1;AA1;AA1;AA1;AA1;AA1;AA1;", getLogOptions());
-  setLogOptions(NULL);
-  TEST_ASSERT_EQUAL(NULL, getLogOptions());
-  setLogOptions("invalidlogopts"); // invalid
-  TEST_ASSERT_EQUAL(NULL, getLogOptions());
+  setLogOptions(NULL); // invalid, ignore
+  TEST_ASSERT_EQUAL_STRING("AA1;AA1;AA1;AA1;AA1;AA1;AA1;AA1;", getLogOptions());
+  setLogOptions("invalidlogopts"); // invalid, ignore
+  TEST_ASSERT_EQUAL_STRING("AA1;AA1;AA1;AA1;AA1;AA1;AA1;AA1;", getLogOptions());
 }
 
 int main() {
