@@ -15,6 +15,13 @@ void tearDown() {}
 
 
 void fcn(const char *msg, const char *clz, LogLevel l, bool newline) {
+  // for dev (print to screen)
+  printf("%s", msg);
+  if (newline) {
+    printf("\n");
+  }
+
+  // for test (save to buffer)
   if (newline) {
     buffer[0] = 0;
   }

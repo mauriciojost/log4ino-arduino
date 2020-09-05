@@ -143,12 +143,6 @@ const char* getLogOptions() {
 
 const char *logLevelStr[6] = {"F", "D", "I", "W", "E", "U"};
 
-#ifdef X86_64
-#include <log4ino/Colors.h>
-const char *logLevelStrRich[6] = {KYEL "FINE" KNRM, KYEL "DEBUG" KNRM, KBLU "INFO " KNRM, KMAG "WARN " KNRM, KRED "ERROR" KNRM, KBLU "USER" KNRM};
-#endif // X86_64
-
-
 void (*prntFunc)(const char *msg, const char *clz, LogLevel l, bool newline) = NULL;
 #endif // YES_DEBUG
 
@@ -156,7 +150,7 @@ void setLogOptionsUnsafe(const char* n) {
   strncpy(logOptions, n, MAX_LOG_OPTIONS_RULES * LOG_UNIT_EXPR_LEN);
   logOptions[MAX_LOG_OPTIONS_RULES * LOG_UNIT_EXPR_LEN] = 0;
   if (prntFunc != NULL) {
-    prntFunc("LOG: '", LOG_CLASS, User, false);
+    prntFunc("SETLOG:'", LOG_CLASS, User, false);
     prntFunc(logOptions, LOG_CLASS, User, false);
     prntFunc("'", LOG_CLASS, User, true);
   }
@@ -180,9 +174,6 @@ void log(const char *clz, LogLevel l, const char *format, ...) {
     snprintf(logStaticBuffer, MAX_LOG_MSG_LENGTH, "%s %s ", clz, logLevelStr[l]);
     logStaticBuffer[MAX_LOG_MSG_LENGTH - 1] = 0;
     prntFunc(logStaticBuffer, clz, l, true);
-#ifdef X86_64 // print anyway
-    printf("[%8.8s] [%s]: ", clz, logLevelStrRich[l]);
-#endif // X86_64
 
     va_list args;
     va_start(args, format);
@@ -192,9 +183,6 @@ void log(const char *clz, LogLevel l, const char *format, ...) {
     logStaticBuffer[MAX_LOG_MSG_LENGTH - 1] = 0;
     logStaticBuffer[MAX_LOG_MSG_LENGTH - 2] = '\n';
     prntFunc(logStaticBuffer, clz, l, false);
-#ifdef X86_64 // print anyway
-    printf("%s\n", logStaticBuffer);
-#endif // X86_64
   }
 #endif // YES_DEBUG
 }
