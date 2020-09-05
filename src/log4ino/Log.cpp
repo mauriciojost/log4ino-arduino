@@ -40,7 +40,7 @@
 #define MAX_LOG_OPTIONS_RULES 8
 #endif // MAX_LOG_OPTIONS_RULES
 
-#define LOG_OPTIONS_DISABLED " "
+#define LOG_OPTIONS_DISABLED "\0"
 
 #ifndef LOG_OPTIONS_DEFAULT 
 #define LOG_OPTIONS_DEFAULT LOG_OPTIONS_DISABLED
@@ -49,8 +49,11 @@
 char logOptions[(MAX_LOG_OPTIONS_RULES * LOG_UNIT_EXPR_LEN) + 1];
 char *logStaticBuffer = NULL;
 
+
+void setLogOptionsUnsafe(const char* n);
+
 void disableLogOptions() {
-  strcpy(logOptions, LOG_OPTIONS_DISABLED);
+  setLogOptionsUnsafe(LOG_OPTIONS_DISABLED);
 }
 
 bool hasToLog(LogLevel l, const char* clz) {
@@ -109,13 +112,12 @@ bool hasToLog(LogLevel l, const char* clz) {
 
 void setLogOptions(const char *opts) {
   if (opts == NULL) {
-      log("LG", User, "Invalid log options");
+      log(LOG_CLASS, User, "Invalid logOpt/NULL");
   } else {
     if (strlen(opts) % 4 == 0) {
-      strncpy(logOptions, opts, MAX_LOG_OPTIONS_RULES * LOG_UNIT_EXPR_LEN);
-      logOptions[MAX_LOG_OPTIONS_RULES * LOG_UNIT_EXPR_LEN] = 0;
+      setLogOptionsUnsafe(opts);
     } else {
-      log("LG", User, "Invalid log options");
+      log(LOG_CLASS, User, "Invalid logOpt(*4)");
     }
   }
 }
@@ -124,7 +126,7 @@ const char* getLogOptions() {
 #ifdef LOG_FIXED_OPTIONS
   return LOG_FIXED_OPTIONS;
 #else // LOG_FIXED_OPTIONS
-  if (logOptions[0] == ' ' || logOptions[0] == 0 ) {
+  if (logOptions[0] == 0) {
     return NULL;
   } else {
     unsigned int len = strlen(logOptions);
@@ -150,11 +152,20 @@ const char *logLevelStrRich[6] = {KYEL "FINE" KNRM, KYEL "DEBUG" KNRM, KBLU "INF
 void (*prntFunc)(const char *msg, const char *clz, LogLevel l, bool newline) = NULL;
 #endif // YES_DEBUG
 
+void setLogOptionsUnsafe(const char* n) {
+  strncpy(logOptions, n, MAX_LOG_OPTIONS_RULES * LOG_UNIT_EXPR_LEN);
+  logOptions[MAX_LOG_OPTIONS_RULES * LOG_UNIT_EXPR_LEN] = 0;
+  if (prntFunc != NULL) {
+    prntFunc("LOG: '", LOG_CLASS, User, false);
+    prntFunc(logOptions, LOG_CLASS, User, false);
+    prntFunc("'", LOG_CLASS, User, true);
+  }
+}
+
 void setupLog(void (*prnt)(const char *msg, const char *clz, LogLevel l, bool newline)) {
 #ifdef YES_DEBUG
-  prnt("-U-\n", LOG_CLASS, Debug, true);
   prntFunc = prnt;
-  strcpy(logOptions, LOG_OPTIONS_DEFAULT);
+  setLogOptionsUnsafe(LOG_OPTIONS_DEFAULT);
   logStaticBuffer = new char[MAX_LOG_MSG_LENGTH];
 #endif // YES_DEBUG
 }
