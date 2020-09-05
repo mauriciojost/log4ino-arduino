@@ -150,9 +150,9 @@ void setLogOptionsUnsafe(const char* n) {
   strncpy(logOptions, n, MAX_LOG_OPTIONS_RULES * LOG_UNIT_EXPR_LEN);
   logOptions[MAX_LOG_OPTIONS_RULES * LOG_UNIT_EXPR_LEN] = 0;
   if (prntFunc != NULL) {
-    prntFunc("SETLOG:'", LOG_CLASS, User, false);
+    prntFunc("SETLOG:'", LOG_CLASS, User, true);
     prntFunc(logOptions, LOG_CLASS, User, false);
-    prntFunc("'", LOG_CLASS, User, true);
+    prntFunc("'\n", LOG_CLASS, User, false);
   }
 }
 
