@@ -33,7 +33,7 @@
 #define MAX_LOG_MSG_LENGTH 16
 #endif // MAX_LOG_MSG_LENGTH
 
-#define LOG_CLASS "LG"
+#define LOG_CLASS "LO"
 #define LOG_UNIT_EXPR_LEN 4
 
 #ifndef MAX_LOG_OPTIONS_RULES
