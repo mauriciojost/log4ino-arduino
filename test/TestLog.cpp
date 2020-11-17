@@ -44,7 +44,7 @@ void test_basic_behaviour() {
 void test_log_options_basic_behaviour() {
   setupLog(fcn);
 
-  TEST_ASSERT_EQUAL(NULL, getLogOptions());
+  TEST_ASSERT_EQUAL_STRING(LOG_OPTIONS_DEFAULT, getLogOptions());
 
   setLogOptions("??d;");
   TEST_ASSERT_EQUAL(true, hasToLog(Debug, "AA"));

@@ -25,10 +25,6 @@
 #include <stdio.h>
 #include <stdarg.h>
 
-#ifndef DEFAULT_LOG_LEVEL
-#define DEFAULT_LOG_LEVEL Fine
-#endif // DEFAULT_LOG_LEVEL
-
 #ifndef MAX_LOG_MSG_LENGTH
 #define MAX_LOG_MSG_LENGTH 16
 #endif // MAX_LOG_MSG_LENGTH
@@ -41,10 +37,6 @@
 #endif // MAX_LOG_OPTIONS_RULES
 
 #define LOG_OPTIONS_DISABLED "\0"
-
-#ifndef LOG_OPTIONS_DEFAULT 
-#define LOG_OPTIONS_DEFAULT LOG_OPTIONS_DISABLED
-#endif // LOG_OPTIONS_DEFAULT
 
 char logOptions[(MAX_LOG_OPTIONS_RULES * LOG_UNIT_EXPR_LEN) + 1];
 char *logStaticBuffer = NULL;
@@ -59,10 +51,6 @@ void disableLogOptions() {
 bool hasToLog(LogLevel l, const char* clz) {
 
   const char* opts = getLogOptions();
-  if (opts == NULL) {
-    return (l >= DEFAULT_LOG_LEVEL);
-  }
-
   for (unsigned int p = 0; p < strlen(opts); p += LOG_UNIT_EXPR_LEN) {
     char optClz0 = opts[p+0];
     char optClz1 = opts[p+1];
@@ -107,7 +95,7 @@ bool hasToLog(LogLevel l, const char* clz) {
       return (l >= lg);
     }
   }
-  return (l >= DEFAULT_LOG_LEVEL);
+  return true;
 }
 
 void setLogOptions(const char *opts) {
@@ -126,15 +114,11 @@ const char* getLogOptions() {
 #ifdef LOG_FIXED_OPTIONS
   return LOG_FIXED_OPTIONS;
 #else // LOG_FIXED_OPTIONS
-  if (logOptions[0] == 0) {
-    return NULL;
+  unsigned int len = strlen(logOptions);
+  if (len < 1 || len % 4 != 0) {
+    return LOG_OPTIONS_DEFAULT;
   } else {
-    unsigned int len = strlen(logOptions);
-    if (len < 1 || len % 4 != 0) {
-      return NULL;
-    } else {
-      return logOptions;
-    }
+    return logOptions;
   }
 #endif // LOG_FIXED_OPTIONS
 }

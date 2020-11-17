@@ -23,9 +23,9 @@
 #ifndef LOG_INC
 #define LOG_INC
 
-#ifndef LOG_LEVEL
-#define LOG_LEVEL 0
-#endif // LOG_LEVEL
+#ifndef LOG_OPTIONS_DEFAULT 
+#define LOG_OPTIONS_DEFAULT "??W."
+#endif // LOG_OPTIONS_DEFAULT
 
 // Fine 0
 // Debug 1
